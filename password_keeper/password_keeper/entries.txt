@@ -1,0 +1,8 @@
+mimi
+	alias:ESilber
+	password:p123abc
+random email
+	alias:joehotrod@hotmail.com
+	email:joenothot
+	password:enthusiast
+ENDblah
