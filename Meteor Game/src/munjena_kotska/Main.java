@@ -4,15 +4,19 @@ import java.awt.Color;
 
 public class Main 
 {
+	final static int width = 1920;
+	final static int height = 1080;
+	final static int delay = 10;
+	
 	public static void main(String args[]) throws InterruptedException {
 		
-		// Delay between ticks.
-		final int delay = 10;
-		 
-		int locx = (1920 / 2) - 400, locy = (1080 / 2) - 400;
+		final int locx = (width / 2) - 400;
+		final int locy = (height / 2) - 400;
+		final Color bg = Color.BLACK;
+		
 
 		GameBoard.C.setLocation(locx, locy);
-		GameBoard.C.setBackgroundColor(Color.BLACK);
+		GameBoard.C.setBackgroundColor(bg);
 		GameBoard.C.clear();		
 		
 		ObjectMan.spawn();
