@@ -2,7 +2,8 @@ package munjena_kotska;
 
 import java.awt.Color;
 
-public abstract class Entity {
+public abstract class Entity
+{
 
 	// Entity attributes.
 	int sizeX, sizeY;
@@ -14,6 +15,7 @@ public abstract class Entity {
 
 	/**
 	 * Creates a new Entity.
+	 * 
 	 * @param posX
 	 * @param posY
 	 * @param sizeX
@@ -52,6 +54,7 @@ public abstract class Entity {
 
 	/**
 	 * Sets Entity direction.
+	 * 
 	 * @param moveX
 	 * @param moveY
 	 */
@@ -60,6 +63,5 @@ public abstract class Entity {
 		this.moveX = moveX;
 		this.moveY = moveY;
 	}
-
 
 }

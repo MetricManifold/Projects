@@ -1,19 +1,23 @@
 package munjena_kotska;
 
-public class Initial_Player_Stats {
+public class Initial_Player_Stats
+{
 
 	/**
 	 * Updates the Player statistics.
 	 */
-	public static void update(Player P) {
-		
-		do {
+	public static void update(Player P)
+	{
+
+		do
+		{
 
 			P.score = (P.kills / 5);
-			
+
 			int rankcase = 0;
 
-			switch (rankcase) {
+			switch (rankcase)
+			{
 			case 0:
 				P.rank = "Bronze";
 				break;
@@ -36,7 +40,7 @@ public class Initial_Player_Stats {
 				P.rank = "Grandmaster";
 				break;
 			}
-			
+
 		} while (true);
 
 	}

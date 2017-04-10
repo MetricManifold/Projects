@@ -7,9 +7,11 @@ public class Main
 	public static void main(String args[]) throws InterruptedException {
 		
 		// Delay between ticks.
-		int delay = 10;
+		final int delay = 10;
+		 
+		int locx = (1920 / 2) - 400, locy = (1080 / 2) - 400;
 
-		GameBoard.C.setLocation((1920 / 2) - 400, (1080 / 2) - 400);
+		GameBoard.C.setLocation(locx, locy);
 		GameBoard.C.setBackgroundColor(Color.BLACK);
 		GameBoard.C.clear();		
 		

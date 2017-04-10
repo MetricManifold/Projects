@@ -4,10 +4,12 @@ import hsa_ufa.Console;
 
 /**
  * Handles key actions.
+ * 
  * @author Robert
  *
  */
-public class KeyDirective {
+public class KeyDirective
+{
 
 	/**
 	 * Checks the player movement keys (
@@ -19,19 +21,23 @@ public class KeyDirective {
 
 		int moveX = 0, moveY = 0;
 
-		if (C.isKeyDown('A')) {
+		if (C.isKeyDown('A'))
+		{
 			moveX--;
 		}
 
-		if (C.isKeyDown('D')) {
+		if (C.isKeyDown('D'))
+		{
 			moveX++;
 		}
 
-		if (C.isKeyDown('W')) {
+		if (C.isKeyDown('W'))
+		{
 			moveY--;
 		}
 
-		if (C.isKeyDown('S')) {
+		if (C.isKeyDown('S'))
+		{
 			moveY++;
 		}
 

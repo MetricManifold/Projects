@@ -18,97 +18,101 @@ import java.awt.*;
 
 public class Message extends CloseableDialog
 {
-  private static int MINIMUM_WIDTH = 200;
-  
-  private Button okButton;
-  
-  
-  /**
-   * Contructor - Message to be displayed on centre of screen.
-   *
-   * @param message The message to be displayed in the Message dialog box.
-   */
-  public Message (String message)
-  {
-    this (message, "", null);
-  } // Constructor - Message (String)
-  
-  
-  /**
-   * Contructor - Message to be displayed on centre of a specified Frame.
-   *
-   * @param message The message to be displayed in the Message dialog box.
-   * @param frame The Frame that the dialog box should be centred on.
-   */
-  public Message (String message, Frame frame)
-  {
-    this (message, "", frame);
-  } // Constructor - Message (String, Frame)
-  
-  
-  /**
-   * Contructor - Message to be displayed on centre of screen with a specified title.
-   *
-   * @param message The message to be displayed in the Message dialog box.
-   * @param title The title of the Message dialog box.
-   */
-  public Message (String message, String title)
-  {
-    this (message, title, null);
-  } // Constructor - Message (String, String)
-  
-  
-  /**
-   * Contructor - Message to be displayed on centre of a specified Frame.
-   *
-   * @param message The message to be displayed in the Message dialog box.
-   * @param frame The Frame that the dialog box should be centred on.
-   * @param title The title of the Message dialog box.
-   */
-  public Message (String message, String title, Frame frame)
-  {
-    // Create the dialog.
-    super (frame, title);
-    
-    setBackground (Color.lightGray);
-    
-    // Put the message at the top
-    this.add ("Center", new Label ("  " + message + "  ", Label.CENTER));
-    
-    // Put OK button at bottom
-    okButton = new Button ("OK");
-    okButton.addActionListener (this);
-    Panel p = new Panel ();
-    p.setLayout (new FlowLayout (FlowLayout.CENTER, 0, 0));
-    p.add (okButton);
-    add ("South", p);
-    
-    pack ();
-    
-    positionDialog (frame);
-    
-    Message.beep ();
-    
-    setVisible (true);
-  } // Constructor - Message (String, String, Frame)
-  
-  
-  /**
-   * Causes the speaker to beep.
-   */
-  public static void beep ()
-  {
-    Toolkit.getDefaultToolkit ().beep ();
-  } // beep (void)
-  
-  
-  /**
-   * Specifies the preferred size of the dialog.
-   */
-  public Dimension getPreferredSize ()
-  {
-    Dimension d = super.getPreferredSize ();
-    d.width = Math.max (MINIMUM_WIDTH, d.width);
-    return d;
-  } // Dimension preferredSize (void)
+	private static final long serialVersionUID = 1L;
+
+	private static int MINIMUM_WIDTH = 200;
+	private Button okButton;
+
+	/**
+	 * Contructor - Message to be displayed on centre of screen.
+	 *
+	 * @param message
+	 *            The message to be displayed in the Message dialog box.
+	 */
+	public Message(String message)
+	{
+		this(message, "", null);
+	} // Constructor - Message (String)
+
+	/**
+	 * Contructor - Message to be displayed on centre of a specified Frame.
+	 *
+	 * @param message
+	 *            The message to be displayed in the Message dialog box.
+	 * @param frame
+	 *            The Frame that the dialog box should be centred on.
+	 */
+	public Message(String message, Frame frame)
+	{
+		this(message, "", frame);
+	} // Constructor - Message (String, Frame)
+
+	/**
+	 * Contructor - Message to be displayed on centre of screen with a specified
+	 * title.
+	 *
+	 * @param message
+	 *            The message to be displayed in the Message dialog box.
+	 * @param title
+	 *            The title of the Message dialog box.
+	 */
+	public Message(String message, String title)
+	{
+		this(message, title, null);
+	} // Constructor - Message (String, String)
+
+	/**
+	 * Contructor - Message to be displayed on centre of a specified Frame.
+	 *
+	 * @param message
+	 *            The message to be displayed in the Message dialog box.
+	 * @param frame
+	 *            The Frame that the dialog box should be centred on.
+	 * @param title
+	 *            The title of the Message dialog box.
+	 */
+	public Message(String message, String title, Frame frame)
+	{
+		// Create the dialog.
+		super(frame, title);
+
+		setBackground(Color.lightGray);
+
+		// Put the message at the top
+		this.add("Center", new Label("  " + message + "  ", Label.CENTER));
+
+		// Put OK button at bottom
+		okButton = new Button("OK");
+		okButton.addActionListener(this);
+		Panel p = new Panel();
+		p.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		p.add(okButton);
+		add("South", p);
+
+		pack();
+
+		positionDialog(frame);
+
+		Message.beep();
+
+		setVisible(true);
+	} // Constructor - Message (String, String, Frame)
+
+	/**
+	 * Causes the speaker to beep.
+	 */
+	public static void beep()
+	{
+		Toolkit.getDefaultToolkit().beep();
+	} // beep (void)
+
+	/**
+	 * Specifies the preferred size of the dialog.
+	 */
+	public Dimension getPreferredSize()
+	{
+		Dimension d = super.getPreferredSize();
+		d.width = Math.max(MINIMUM_WIDTH, d.width);
+		return d;
+	} // Dimension preferredSize (void)
 } /* Message class */
