@@ -14,13 +14,13 @@ public class KeyDirective
 	/**
 	 * Checks the player movement keys (
 	 */
-	public static void checkPlayerMoveKeys()
+	public static void checkPlayerMoveKeys(GameBoard GB)
 	{
-		Console C = GameBoard.C;
-		Player P = GameBoard.P;
+		Console C = GB.C;
+		Player P = GB.P;
 
 		int moveX = 0, moveY = 0;
-
+		
 		if (C.isKeyDown('A'))
 		{
 			moveX--;

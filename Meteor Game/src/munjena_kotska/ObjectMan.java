@@ -11,97 +11,100 @@ import java.util.ArrayList;
  */
 public class ObjectMan
 {
+	static final int spawn_interval = 100;
+	int spawn_tracker = 0;
 
-	static List<Entity> entities = new ArrayList<Entity>();
+	List<Entity> entities = new ArrayList<Entity>();
+	GameBoard GB;
 
-	static int spawn_interval = 100;
-	static int spawn_tracker = 0;
-
-	/**
-	 * Handles collision between all entities on the game board.
-	 * 
-	 * @param index
-	 *            : Index along the entities list.
-	 */
-	public static void update(int index)
+	public ObjectMan(GameBoard GB)
 	{
-		if (index == entities.size())
-			return;
-
-		entities.get(index).move();
-		entities.get(index).draw();
-
-		Entity remove = null;
-
-		for (Entity e : entities)
-		{
-			if (e == entities.get(index))
-				continue;
-
-			// Collision check.
-			if (Math.abs(e.posX - entities.get(index).posX) < (e.sizeX + entities.get(index).sizeX) / 2
-					&& Math.abs(e.posY - entities.get(index).posY) < (e.sizeY + entities.get(index).sizeY) / 2)
-				remove = e;
-
-		}
-
-		if (remove != null)
-		{
-			entities.remove(index);
-			entities.remove(remove);
-		}
-
-		update(index + 1);
-
+		this.GB = GB;
 	}
 
 	/**
-	 * Handles map bounds collisions for meteors only.
+	 * Handles collision between all entities
+	 * 
+	 * @param e
+	 */
+	public void update()
+	{
+		for (Entity e : entities)
+		{
+			for (Entity f : entities)
+			{
+				float spaceX = e.posX - f.posX;
+				float spaceY = e.posY - f.posY;
+
+				// AABB check and remove colliding elements
+				if (f != e &&
+						spaceX > 0.0 && spaceX < f.sizeY ||
+						spaceX < 0.0 && spaceX > -e.sizeX ||
+						spaceY > 0.0 && spaceY < f.sizeY ||
+						spaceY < 0.0 && spaceY > -e.sizeY)
+				{
+					entities.remove(f);
+				}
+			}
+			e.move();
+			e.draw(GB.C);
+		}
+		
+		// player update
+		Player P = GB.P;
+		P.move();
+		P.draw(GB.C);
+	}
+
+	/**
+	 * Handles map bounds collisions for all objects.
 	 * 
 	 * @param index
 	 *            : Index along the entities list.
 	 */
-	public static void mapBounds(int index)
+	public void mapBounds()
 	{
-		if (index == entities.size())
-			return;
-
-		// Map bounds check.
-		if (entities.get(index).posY + entities.get(index).sizeY > GameBoard.SIZE_Y && !(entities.get(index) instanceof Player))
+		for (Entity e : entities)
 		{
-			entities.remove(index);
+			if (e.posY + e.sizeY > GameBoard.SIZE_Y)
+			{
+				entities.remove(e);
+			}
 		}
-
-		mapBounds(index + 1);
 	}
 
 	/**
 	 * Handles the spawning of meteors on the board.
 	 */
-	public static void spawn()
+	public void spawn()
 	{
-		spawn_tracker = (spawn_tracker + 1) % spawn_interval;
-
-		if (spawn_tracker != 0)
-			return;
-
-		int randomX = 0;
-		Meteor M = new Meteor(randomX, 0);
-		M.setDirection(0, 5);
-
+		if (spawn_tracker++ == 0)
+		{
+			int randomX = 0;
+			Entity M = appendEntity(new Meteor(randomX, 0));
+			M.setDirection(0, 5);
+		}
+		spawn_tracker %= spawn_interval;
 	}
 
 	/**
-	 * Adds an Entity to the entity list.
+	 * Adds an Entity to the entity list and returns it
 	 * 
 	 * @param e
 	 */
-	public static void addEntity(Entity e)
+	public Entity appendEntity(Entity e)
 	{
 		entities.add(e);
+		return e;
 	}
 
-	public static void playerBounds(Player P)
+	/**
+	 * Evaluates the bounds and movement of player to return new translation
+	 * vector.
+	 * 
+	 * @param P
+	 */
+	public void playerBounds(Player P)
 	{
 		float moveX = P.moveX, moveY = P.moveY;
 

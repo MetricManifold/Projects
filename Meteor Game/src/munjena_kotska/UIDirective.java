@@ -12,14 +12,11 @@ import java.awt.Color;
  */
 public class UIDirective
 {
-
 	/**
 	 * Draws the game UI to the screen.
 	 */
-	public static void draw()
+	public static void draw(Console C)
 	{
-		Console C = GameBoard.C;
-
 		C.setColor(Color.DARK_GRAY);
 		C.fillRect(0, 0, 150, 800);
 		C.setColor(Color.WHITE);
@@ -31,7 +28,6 @@ public class UIDirective
 		C.setColor(Color.WHITE);
 		C.drawRect(0, 0, 149, 199);
 		C.drawRect(0, 0, 150, 200);
-
 	}
 
 }
