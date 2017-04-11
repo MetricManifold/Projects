@@ -39,7 +39,6 @@ public abstract class Entity
 		C.fillRect((int) posX, (int) posY, sizeX, sizeY);
 		C.setColor(Color.black);
 		C.drawRect((int) posX, (int) posY, sizeX, sizeY);
-
 	}
 
 	/**

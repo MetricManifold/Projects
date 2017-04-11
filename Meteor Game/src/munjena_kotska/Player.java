@@ -13,7 +13,7 @@ public class Player extends Entity
 	int kills = 0;
 	int score = 0;
 
-	float moveSpeed = 2f;
+	float moveSpeed = 10F;
 
 	/**
 	 * Initializes the Player Entity
@@ -27,44 +27,74 @@ public class Player extends Entity
 	}
 
 	/**
-	 * Updates the Player statistics.
+	 * Updates the Player rank.
 	 */
-	public static void update(Player P)
+	public void updateRank()
 	{
 
 		do
 		{
-			P.score = (P.kills / 5);
+			score = (kills / 5);
 
-			int rankcase = 0;
-
-			switch (rankcase)
+			switch (score / 100)
 			{
 			case 0:
-				P.rank = "Bronze";
+				rank = "Bronze";
 				break;
 			case 1:
-				P.rank = "Silver";
+				rank = "Silver";
 				break;
 			case 2:
-				P.rank = "Gold";
+				rank = "Gold";
 				break;
 			case 3:
-				P.rank = "Platinum";
+				rank = "Platinum";
 				break;
 			case 4:
-				P.rank = "Diamond";
+				rank = "Diamond";
 				break;
 			case 5:
-				P.rank = "Master";
+				rank = "Master";
 				break;
 			case 6:
-				P.rank = "Grandmaster";
+				rank = "Grandmaster";
 				break;
 			}
 
 		} while (true);
 
+	}
+
+	/**
+	 * Evaluates the bounds and movement of player to return new translation
+	 * vector.
+	 * 
+	 * @param P
+	 */
+	public void move()
+	{
+		if (posX <= GameBoard.P_BOUNDS_X0 && moveX < 0)
+		{
+			posX = GameBoard.P_BOUNDS_X0;
+			moveX = 0;
+		}
+		if (posX + sizeX >= GameBoard.SIZE_X && moveX > 0)
+		{
+			posX = GameBoard.SIZE_X - sizeY;
+			moveX = 0;
+		}
+		if (posY <= GameBoard.P_BOUNDS_Y0 && moveY < 0)
+		{
+			posY = GameBoard.P_BOUNDS_Y0;
+			moveY = 0;
+		}
+		if (posY + sizeY >= GameBoard.SIZE_Y && moveY > 0)
+		{
+			posY = GameBoard.SIZE_Y - sizeY;
+			moveY = 0;
+		}
+		
+		super.move();
 	}
 
 }

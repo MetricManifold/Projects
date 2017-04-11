@@ -9,18 +9,16 @@ public class Main
 	final static Dimension SDIM = Toolkit.getDefaultToolkit().getScreenSize();
 	final static double WIDTH = SDIM.getWidth();
 	final static double HEIGHT = SDIM.getHeight();
-	final static int DELAY = 10;
+	final static int DELAY = 20;
 
 	public static void main(String args[]) throws InterruptedException
 	{
-		final int locx = (int) (WIDTH / 2) - 400;
-		final int locy = (int) (HEIGHT / 2) - 400;
+		final int locX = (int) (WIDTH - GameBoard.SIZE_X) / 2;
+		final int locY = (int) (HEIGHT - GameBoard.SIZE_Y) / 2 - 20;
 		final Color bg = Color.BLACK;
-		
-		GameBoard GB = new GameBoard(locx, locy, bg);
+
+		GameBoard GB = new GameBoard(locX, locY, bg);
 		ObjectMan OM = new ObjectMan(GB);
-		
-		OM.spawn();
 
 		do
 		{
@@ -33,12 +31,8 @@ public class Main
 				OM.spawn();
 
 				// Update the entities.
-				OM.playerBounds(GB.P);
+				GB.update();
 				OM.update();
-				OM.mapBounds();
-
-				// Draw the UI.
-				UIDirective.draw(GB.C);
 			}
 
 			Thread.sleep(DELAY);

@@ -1,6 +1,7 @@
 package munjena_kotska;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 
 /**
@@ -11,8 +12,9 @@ import java.util.ArrayList;
  */
 public class ObjectMan
 {
-	static final int spawn_interval = 100;
+	int spawn_interval = 20;
 	int spawn_tracker = 0;
+	int numEntities = 0;
 
 	List<Entity> entities = new ArrayList<Entity>();
 	GameBoard GB;
@@ -23,54 +25,66 @@ public class ObjectMan
 	}
 
 	/**
+	 * Returns the aabb collision check between two objects
+	 * 
+	 * @param a
+	 *            first object
+	 * @param b
+	 *            second object
+	 * @return
+	 */
+	private boolean aabbCheck(Entity a, Entity b)
+	{
+		float spaceX = a.posX - b.posX;
+		float spaceY = a.posY - b.posY;
+
+		return (a != b &&
+				(spaceX > 0.0 && spaceX < b.sizeX || spaceX < 0.0 && spaceX > -a.sizeX) &&
+				(spaceY > 0.0 && spaceY < b.sizeY || spaceY < 0.0 && spaceY > -a.sizeY));
+	}
+
+	/**
 	 * Handles collision between all entities
 	 * 
 	 * @param e
 	 */
 	public void update()
 	{
-		for (Entity e : entities)
-		{
-			for (Entity f : entities)
-			{
-				float spaceX = e.posX - f.posX;
-				float spaceY = e.posY - f.posY;
-
-				// AABB check and remove colliding elements
-				if (f != e &&
-						spaceX > 0.0 && spaceX < f.sizeY ||
-						spaceX < 0.0 && spaceX > -e.sizeX ||
-						spaceY > 0.0 && spaceY < f.sizeY ||
-						spaceY < 0.0 && spaceY > -e.sizeY)
-				{
-					entities.remove(f);
-				}
-			}
-			e.move();
-			e.draw(GB.C);
-		}
-		
-		// player update
+		List<Integer> toRemove = new ArrayList<Integer>();
 		Player P = GB.P;
+
+		for (int i = 0; i < numEntities; i++)
+		{
+			Entity e = entities.get(i);
+
+			if (e.posY + e.sizeY > GameBoard.SIZE_Y || aabbCheck(P, e))
+			{
+				toRemove.add(i);
+			}
+			else
+			{
+				for (int j = 0; j < numEntities; j++)
+				{
+					Entity f = entities.get(i);
+					if (aabbCheck(e, f))
+					{
+						toRemove.add(i);
+					}
+				}
+
+				e.move();
+				e.draw(GB.C);
+			}
+		}
+
+		for (int i : toRemove)
+		{
+			removeEntity(i);
+		}
+
+		// player update
 		P.move();
 		P.draw(GB.C);
-	}
-
-	/**
-	 * Handles map bounds collisions for all objects.
-	 * 
-	 * @param index
-	 *            : Index along the entities list.
-	 */
-	public void mapBounds()
-	{
-		for (Entity e : entities)
-		{
-			if (e.posY + e.sizeY > GameBoard.SIZE_Y)
-			{
-				entities.remove(e);
-			}
-		}
 	}
 
 	/**
@@ -80,9 +94,13 @@ public class ObjectMan
 	{
 		if (spawn_tracker++ == 0)
 		{
-			int randomX = 0;
-			Entity M = appendEntity(new Meteor(randomX, 0));
-			M.setDirection(0, 5);
+			int spawnX = ThreadLocalRandom.current().nextInt(GameBoard.P_BOUNDS_X0, GameBoard.SIZE_X);
+			float moveY = (float) ThreadLocalRandom.current().nextDouble(6L, 8L);
+
+			Entity M = appendEntity(new Meteor(spawnX, 0));
+			M.setDirection(0, moveY);
+
+			if (spawn_interval > 3) spawn_interval--;
 		}
 		spawn_tracker %= spawn_interval;
 	}
@@ -95,41 +113,14 @@ public class ObjectMan
 	public Entity appendEntity(Entity e)
 	{
 		entities.add(e);
+		numEntities++;
 		return e;
 	}
 
-	/**
-	 * Evaluates the bounds and movement of player to return new translation
-	 * vector.
-	 * 
-	 * @param P
-	 */
-	public void playerBounds(Player P)
+	public void removeEntity(int index)
 	{
-		float moveX = P.moveX, moveY = P.moveY;
-
-		if (P.posX <= GameBoard.P_BOUNDS_X0 && moveX < 0)
-		{
-			P.posX = GameBoard.P_BOUNDS_X0;
-			moveX = 0;
-		}
-		if (P.posX + P.sizeX >= GameBoard.SIZE_X && moveX > 0)
-		{
-			P.posX = GameBoard.SIZE_X - P.sizeY;
-			moveX = 0;
-		}
-		if (P.posY <= GameBoard.P_BOUNDS_Y0 && moveY < 0)
-		{
-			P.posY = GameBoard.P_BOUNDS_Y0;
-			moveY = 0;
-		}
-		if (P.posY + P.sizeY >= GameBoard.SIZE_Y && moveY > 0)
-		{
-			P.posY = GameBoard.SIZE_Y - P.sizeY;
-			moveY = 0;
-		}
-
-		P.setDirection(moveX, moveY);
+		entities.remove(index);
+		numEntities--;
 	}
 
 }
