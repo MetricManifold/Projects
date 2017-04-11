@@ -18,6 +18,11 @@ import java.awt.*;
 
 public class Message extends CloseableDialog
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static int MINIMUM_WIDTH = 200;
 
 	private Button okButton;

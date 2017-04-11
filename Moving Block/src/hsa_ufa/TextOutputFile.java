@@ -318,12 +318,9 @@ public class TextOutputFile
 	public void print(double number, int fieldSize, int decimalPlaces)
 	{
 		double posValue = Math.abs(number);
-		int placesRemaining = fieldSize;
 		String format = null, numStr;
 		StringBuffer padding = new StringBuffer();
 
-		if (number < 0)
-			placesRemaining--; // Space for the minus sign
 		if (posValue < 10.0)
 			format = "0";
 		else if (posValue < 100.0)

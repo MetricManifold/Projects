@@ -16,6 +16,10 @@ import java.awt.*;
 
 public class FatalError extends CloseableDialog
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private java.awt.Button quitButton;
 
 	/**

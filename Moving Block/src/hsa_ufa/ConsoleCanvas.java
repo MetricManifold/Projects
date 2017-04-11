@@ -32,7 +32,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -40,6 +39,10 @@ import javax.swing.Timer;
 public class ConsoleCanvas extends JPanel implements ActionListener, KeyListener
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/** Window title **/
 	private String title;
 	/** Container of this object **/

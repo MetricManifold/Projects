@@ -19,6 +19,11 @@ class CloseableDialog extends java.awt.Dialog
 		java.awt.event.WindowListener
 {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * Creates a closeable dialog with a close box that closes the dialog. This
 	 * constructor allows parent to be null if desired.
 	 *
