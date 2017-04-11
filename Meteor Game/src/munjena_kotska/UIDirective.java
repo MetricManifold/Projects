@@ -14,11 +14,16 @@ public class UIDirective
 {
 	public static final int SCORE_X0 = 10, SCORE_Y0 = 10, SCORE_W = 100, SCORE_H = 100;
 	public static final int INFO_X0 = 0, INFO_Y0 = SCORE_W, INFO_W = SCORE_W, INFO_H = GameBoard.SIZE_Y - SCORE_H;
-	private Console C;
+	public static final int SCORE_RANK_X0 = SCORE_X0 + 10, SCORE_RANK_Y0 = SCORE_Y0 + 20;
+	public static final int SCORE_SCORE_X0 = SCORE_X0 + 10, SCORE_SCORE_Y0 = SCORE_Y0 + 40;
 
-	public UIDirective(Console C)
+	private Console C;
+	private Player P;
+
+	public UIDirective(GameBoard GB)
 	{
-		this.C = C;
+		this.C = GB.C;
+		this.P = GB.P;
 		draw();
 	}
 
@@ -39,6 +44,10 @@ public class UIDirective
 		C.fillRect(SCORE_X0, SCORE_Y0, SCORE_W, SCORE_H);
 		C.setColor(Color.WHITE);
 		C.drawRect(SCORE_X0, SCORE_Y0, SCORE_W, SCORE_H);
+
+		// rank and score
+		C.drawString(P.rank, SCORE_RANK_X0, SCORE_RANK_Y0);
+		C.drawString(String.valueOf(P.score), SCORE_SCORE_X0, SCORE_SCORE_Y0);
 	}
 
 	/**

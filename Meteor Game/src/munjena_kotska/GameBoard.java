@@ -16,7 +16,7 @@ public class GameBoard
 
 	public Console C = new Console(SIZE_X, SIZE_Y, TITLE);
 	public Player P = new Player(P_SPAWN_X, P_SPAWN_Y);
-	public UIDirective UI = new UIDirective(C);
+	public UIDirective UI = new UIDirective(this);
 
 	public GameBoard(int locx, int locy, Color bg)
 	{

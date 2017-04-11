@@ -32,36 +32,30 @@ public class Player extends Entity
 	public void updateRank()
 	{
 
-		do
+		switch ((score + kills * 100) / 100)
 		{
-			score = (kills / 5);
-
-			switch (score / 100)
-			{
-			case 0:
-				rank = "Bronze";
-				break;
-			case 1:
-				rank = "Silver";
-				break;
-			case 2:
-				rank = "Gold";
-				break;
-			case 3:
-				rank = "Platinum";
-				break;
-			case 4:
-				rank = "Diamond";
-				break;
-			case 5:
-				rank = "Master";
-				break;
-			case 6:
-				rank = "Grandmaster";
-				break;
-			}
-
-		} while (true);
+		case 0:
+			rank = "Bronze";
+			break;
+		case 1:
+			rank = "Silver";
+			break;
+		case 2:
+			rank = "Gold";
+			break;
+		case 3:
+			rank = "Platinum";
+			break;
+		case 4:
+			rank = "Diamond";
+			break;
+		case 5:
+			rank = "Master";
+			break;
+		case 6:
+			rank = "Grandmaster";
+			break;
+		}
 
 	}
 
@@ -95,6 +89,8 @@ public class Player extends Entity
 		}
 		
 		super.move();
+		score++;
+		updateRank();
 	}
 
 }

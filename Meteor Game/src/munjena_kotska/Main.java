@@ -22,8 +22,10 @@ public class Main
 
 		do
 		{
+			long s = System.nanoTime();
 			synchronized (GB.C)
 			{
+
 				// Register key presses.
 				KeyDirective.checkPlayerMoveKeys(GB);
 
@@ -33,9 +35,11 @@ public class Main
 				// Update the entities.
 				GB.update();
 				OM.update();
+
 			}
 
-			Thread.sleep(DELAY);
+			long e = System.nanoTime();
+			Thread.sleep(DELAY - (e - s) / 1000000);
 		} while (true);
 
 	}

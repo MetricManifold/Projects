@@ -12,10 +12,11 @@ import java.util.ArrayList;
  */
 public class ObjectMan
 {
-	int spawn_interval = 20;
-	int spawn_tracker = 0;
+	int spawn_interval = 20, spawn_tracker = 0, spawn_min = 6;
 	int numEntities = 0;
 
+	static final double moveXmin = 3L, moveXmax = 6L;
+	
 	List<Entity> entities = new ArrayList<Entity>();
 	GameBoard GB;
 
@@ -57,7 +58,7 @@ public class ObjectMan
 		{
 			Entity e = entities.get(i);
 
-			if (e.posY + e.sizeY > GameBoard.SIZE_Y || aabbCheck(P, e))
+			if (e.posY > GameBoard.SIZE_Y || aabbCheck(P, e))
 			{
 				toRemove.add(i);
 			}
@@ -95,12 +96,12 @@ public class ObjectMan
 		if (spawn_tracker++ == 0)
 		{
 			int spawnX = ThreadLocalRandom.current().nextInt(GameBoard.P_BOUNDS_X0, GameBoard.SIZE_X);
-			float moveY = (float) ThreadLocalRandom.current().nextDouble(6L, 8L);
+			float moveY = (float) ThreadLocalRandom.current().nextDouble(moveXmin, moveXmax);
 
 			Entity M = appendEntity(new Meteor(spawnX, 0));
 			M.setDirection(0, moveY);
 
-			if (spawn_interval > 3) spawn_interval--;
+			if (spawn_interval > spawn_min) spawn_interval--;
 		}
 		spawn_tracker %= spawn_interval;
 	}
