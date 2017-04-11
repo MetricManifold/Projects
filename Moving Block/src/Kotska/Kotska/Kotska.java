@@ -3,33 +3,24 @@ package Kotska;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import DataClasses.ObjectMan;
 import java.awt.*;
-import Kotska.DataClasses.ObjectMan;
+import Object.Rectangle;
+import Object.Triangle;
+import Object.Hexagon;
 import hsa_ufa.Console;
-import Kotska.Object.Hexagon;
-import Kotska.Object.Rectangle;
-import Kotska.Object.Triangle;
 
-public class Kotska {
+public class Kotska
+{
 
-	public static final int 
-	MAX_HEIGHT = 800,
-	MAX_WIDTH = 800,
-	DIM_BUFF = 55;
+	public static final int MAX_HEIGHT = 800, MAX_WIDTH = 800, DIM_BUFF = 55;
+	public static boolean W_down = false, A_down = false, S_down = false, D_down = false;
+	public static int test = 0;
 
 	public static Console c = new Console(MAX_WIDTH + 55, MAX_WIDTH + 55, "Kotska");
-
-	public static boolean 
-	W_down = false,
-	A_down = false,
-	S_down = false,
-	D_down = false;
-	
-	public static int test = 0;
-	
 	static boolean onLSD = false;
 
-	public static void main(String args[]) throws InterruptedException 
+	public static void main(String args[]) throws InterruptedException
 	{
 		/*
 		 * Enable mouse methods
@@ -40,18 +31,18 @@ public class Kotska {
 		final int fY = 240;
 
 		Image faces[] = new Image[5];
-		try 
+		try
 		{
 			Image temp[] = {
-					ImageIO.read(new File("normal_s.jpg")),  
+					ImageIO.read(new File("normal_s.jpg")),
 					ImageIO.read(new File("hurt_up_s.jpg")),
-					ImageIO.read(new File("hurt_right.jpg")), 
-					ImageIO.read(new File("hurt_down_s.jpg")), 
+					ImageIO.read(new File("hurt_right.jpg")),
+					ImageIO.read(new File("hurt_down_s.jpg")),
 					ImageIO.read(new File("hurt_left_s.jpg"))
 			};
 			faces = temp;
-		} 
-		catch (IOException e) 
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
@@ -62,11 +53,13 @@ public class Kotska {
 		Triangle tri_1 = new Triangle(300, 300, 100, 100, 8);
 		Hexagon hex_1 = new Hexagon(500, 300, 200, 150, 52);
 
-		//Square character = new Square(c.getDrawWidth() / 2 - 100, c.getDrawHeight() / 2 + 45, 50);
-		Player p = new Player(c.getDrawWidth() / 2 - 100, c.getDrawHeight() / 2 + 45, (int)(fX * 0.4), (int)(fY * 0.4), 10, faces);
-		//Oval obstacle = new Oval(c.getDrawWidth() / 2, c.getDrawHeight () / 2, 100, 200);
+		// Square character = new Square(c.getDrawWidth() / 2 - 100,
+		// c.getDrawHeight() / 2 + 45, 50);
+		Player p = new Player(c.getDrawWidth() / 2 - 100, c.getDrawHeight() / 2 + 45, (int) (fX * 0.4), (int) (fY * 0.4), 10, faces);
+		// Oval obstacle = new Oval(c.getDrawWidth() / 2, c.getDrawHeight () /
+		// 2, 100, 200);
 
-		ObjectMan.addObjects(box_1, box_2, box_3, tri_1, hex_1 /*, obstacle */);
+		ObjectMan.addObjects(box_1, box_2, box_3, tri_1, hex_1 /* , obstacle */);
 		ObjectMan.addObjects(p);
 
 		int R = 30;
@@ -75,56 +68,54 @@ public class Kotska {
 
 		int random_tracker = 0;
 
-		
 		random_tracker %= 100;
-		if (random_tracker == 0)	
-			ObjectMan.randomTrajectories()
-		;
+		if (random_tracker == 0)
+			ObjectMan.randomTrajectories();
 
-		
-		
 		c.setFont(new Font("Helvetica", Font.PLAIN, 40));
 		box_1.setColor(Color.RED);
 		box_2.setColor(Color.cyan);
 		box_3.setColor(Color.magenta);
 		hex_1.setColor(Color.yellow);
-		
+
 		double thistime, lasttime = System.currentTimeMillis();
-		
+
 		double peak = 20;
 		Physics.update();
-		do {
+		do
+		{
 
-			synchronized(c) {
+			synchronized (c)
+			{
 
 				c.setBackgroundColor(new Color(R, G, B));
 				c.clear();
-				
-				//Text
+
+				// Text
 				random_tracker++;
 				thistime = System.currentTimeMillis();
 				c.drawString((thistime - lasttime) + " Peak: " + peak, 100, 100);
 				random_tracker %= 1000;
 				if (random_tracker == 0) peak = 20;
 				if (thistime - lasttime > peak) peak = thistime - lasttime;
-				
+
 				lasttime = thistime;
-				
+
 				/*
 				 * Perform all update operations
 				 */
-				
+
 				ObjectMan.update();
 				p.updatePos();
 				Physics.update();
 				Render.draw();
-				
+
 				/*
 				 * Update the character
 				 */
 				p.updateImage();
 			}
-			
+
 			if (onLSD)
 			{
 				R += 1;
@@ -158,12 +149,10 @@ public class Kotska {
 			else
 				S_down = false;
 
-
-
 		} while (true);
 
-		//c.clear();
-		//wc.print("Game Over");
+		// c.clear();
+		// wc.print("Game Over");
 
 	}
 }

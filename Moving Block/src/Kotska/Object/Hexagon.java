@@ -1,15 +1,22 @@
-package Kotska.Object;
+package Object;
 
 import Kotska.Kotska;
 
-public class Hexagon extends Shape {
+public class Hexagon extends Shape
+{
 	/**
 	 * Makes a hexagon and draws it to the screen.
-	 * @param x_pos : Top left x coordinate.
-	 * @param y_pos : Top left y coordinate.
-	 * @param x_size : Width of the shape.
-	 * @param y_size : Height of the shape.
-	 * @param mass : Mass of the shape.
+	 * 
+	 * @param x_pos
+	 *            : Top left x coordinate.
+	 * @param y_pos
+	 *            : Top left y coordinate.
+	 * @param x_size
+	 *            : Width of the shape.
+	 * @param y_size
+	 *            : Height of the shape.
+	 * @param mass
+	 *            : Mass of the shape.
 	 */
 	public Hexagon(int x_pos, int y_pos, int x_size, int y_size, int mass)
 	{
@@ -39,12 +46,11 @@ public class Hexagon extends Shape {
 	public Hexagon getCopy()
 	{
 		Hexagon h = new Hexagon((int) x_pos, (int) y_pos, x_size, y_size, momentum.mass);
-		
+
 		/*
 		 * Set data
 		 */
-		
-		
+
 		return h;
 	}
 }
