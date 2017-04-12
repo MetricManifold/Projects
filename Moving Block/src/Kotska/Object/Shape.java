@@ -1,23 +1,17 @@
-package Kotska.Object;
+package Object;
 
 import java.awt.Color;
 
 import Kotska.Kotska;
+import DataClasses.*;
 import Kotska.Physics;
 import Kotska.SMath;
-import Kotska.DataClasses.DataObjectBase;
-import Kotska.DataClasses.Direction;
-import Kotska.DataClasses.Displacement;
-import Kotska.DataClasses.Momentum;
-import Kotska.DataClasses.ObjectMan;
-import Kotska.DataClasses.Pair;
-import Kotska.DataClasses.PointArray;
-import Kotska.DataClasses.VertexArray;
 
 /**
  * Superclass of all shapes.
  */
-public abstract class Shape implements DataObjectBase<Shape> {
+public abstract class Shape implements DataObjectBase<Shape>
+{
 
 	protected String ID;
 
@@ -35,11 +29,17 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Creates a new shape.
-	 * @param x_pos : Top left x coordinate.
-	 * @param y_pos : Top left y coordinate.
-	 * @param x_size : Width of the shape.
-	 * @param y_size : Height of the shape.
-	 * @param mass : Mass of the shape.
+	 * 
+	 * @param x_pos
+	 *            : Top left x coordinate.
+	 * @param y_pos
+	 *            : Top left y coordinate.
+	 * @param x_size
+	 *            : Width of the shape.
+	 * @param y_size
+	 *            : Height of the shape.
+	 * @param mass
+	 *            : Mass of the shape.
 	 */
 	protected Shape(int x_pos, int y_pos, int x_size, int y_size, int mass)
 	{
@@ -71,14 +71,16 @@ public abstract class Shape implements DataObjectBase<Shape> {
 	 */
 	protected void makeNormals()
 	{
-		//Make the array that contains the normals
+		// Make the array that contains the normals
 		normals = new Direction[normals_to_make];
 
-		//Declare x and y coordinate arrays to make derivation of normals more clear
+		// Declare x and y coordinate arrays to make derivation of normals more
+		// clear
 		int s_X[] = getVertices().X();
 		int s_Y[] = getVertices().Y();
 
-		//Iterate through all the indices of the normal array, finding line segments between two vertices and normalizing them
+		// Iterate through all the indices of the normal array, finding line
+		// segments between two vertices and normalizing them
 		for (int j = 0; j < normals.length; j++)
 			normals[j] = new Direction(
 					-(s_Y[j] - s_Y[(j + 1 == getVertices().size()) ? 0 : j + 1]),
@@ -101,26 +103,32 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Adds a new point used to define the shape.
-	 * @param x_new : The x coordinate of a new point.
-	 * @param y_new : The y coordinate of a new point.
+	 * 
+	 * @param x_new
+	 *            : The x coordinate of a new point.
+	 * @param y_new
+	 *            : The y coordinate of a new point.
 	 */
 	protected void addVertex(int x_new, int y_new)
 	{
-		try 
+		try
 		{
 			vertices.addVertex(x_new, y_new);
 			points.addPoint(x_new, y_new);
-		} 
-		catch (ShapeTooComplexException e) 
-		{ 
-			e.printStackTrace(); 
+		}
+		catch (ShapeTooComplexException e)
+		{
+			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * Returns the projection of the shape onto the given axis.
-	 * @param axis : The axis of projection.
-	 * @return The values representing the projection of the shape onto the given axis.
+	 * 
+	 * @param axis
+	 *            : The axis of projection.
+	 * @return The values representing the projection of the shape onto the
+	 *         given axis.
 	 */
 	public Pair<Float> proj(Direction axis)
 	{
@@ -131,7 +139,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 		for (int i = 0; i < getPoints().size(); i++)
 		{
 			dot = SMath.dot(axis, points.pointFloat(i));
-			
+
 			if (dot < min)
 				min = dot;
 			if (dot > max)
@@ -143,7 +151,9 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Sets the drawing colour of the shape.
-	 * @param new_color : The new drawing colour of the shape.
+	 * 
+	 * @param new_color
+	 *            : The new drawing colour of the shape.
 	 */
 	public void setColor(Color new_color)
 	{
@@ -152,7 +162,9 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Sets the scale of the shape.
-	 * @param scale : The new scale of the shape.
+	 * 
+	 * @param scale
+	 *            : The new scale of the shape.
 	 */
 	public void setScale(double scale)
 	{
@@ -168,32 +180,31 @@ public abstract class Shape implements DataObjectBase<Shape> {
 		 * A priori collision response.
 		 */
 		Displacement shift = getShift();
-		
+
 		x_pos += shift.A();
 		y_pos += shift.B();
 		points.shift(shift.A(), shift.B());
-		
+
 		Displacement mtv = Physics.checkCollision(this);
 
 		x_pos -= shift.A();
 		y_pos -= shift.B();
 		points.shift(-shift.A(), -shift.B());
-		
-		if (mtv != null) 
+
+		if (mtv != null)
 			shift.add(mtv);
-		
-		//Move the shape with given shift.
+
+		// Move the shape with given shift.
 		move(shift);
-		
-		//Momentum update.
+
+		// Momentum update.
 		momentum.update();
-		if (momentum.getVelocity().getMagnitude() > 0) 
+		if (momentum.getVelocity().getMagnitude() > 0)
 			Physics.addActiveObject(this);
 	}
-	
+
 	/**
-	 * Updates the state of the shape.
-	 * State includes all non-physics elements.
+	 * Updates the state of the shape. State includes all non-physics elements.
 	 */
 	public void updateState()
 	{
@@ -212,18 +223,21 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Moves the shape using the given displacement.
-	 * @param shift : Value of the shift along the x and y axes.
+	 * 
+	 * @param shift
+	 *            : Value of the shift along the x and y axes.
 	 */
 	private void move(Displacement shift)
 	{
 		x_pos += shift.A();
-		y_pos += shift.B();		
+		y_pos += shift.B();
 		points.shift(shift.A(), shift.B());
 		vertices.moveTo(points);
 	}
-	
+
 	/**
 	 * Gets the shift of the shape during the tick.
+	 * 
 	 * @return Shift
 	 */
 	protected Displacement getShift()
@@ -232,13 +246,15 @@ public abstract class Shape implements DataObjectBase<Shape> {
 	}
 
 	/**
-	 * Rotates the shape by a given angle using the rotation matrix.
-	 * NOT IMPLEMENTED
-	 * @param angle : Angle of rotation.
+	 * Rotates the shape by a given angle using the rotation matrix. NOT
+	 * IMPLEMENTED
+	 * 
+	 * @param angle
+	 *            : Angle of rotation.
 	 */
 	public void rotate(double angle)
 	{
-		//Code for rotation if the shape is to rotate
+		// Code for rotation if the shape is to rotate
 		makeNormals();
 	}
 
@@ -248,6 +264,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the array containing all vertices of the shape.
+	 * 
 	 * @return The array of vertices.
 	 */
 	public VertexArray getVertices()
@@ -257,6 +274,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the array containing all the points of the shape.
+	 * 
 	 * @return Floating point array representation of the vertices of the shape.
 	 */
 	public PointArray getPoints()
@@ -266,11 +284,12 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	public Pair<Float> getCenter()
 	{
-		return new Pair<Float>((float)X() + (float)sizeX() / 2, (float)Y() + (float)sizeY() / 2);
+		return new Pair<Float>((float) X() + (float) sizeX() / 2, (float) Y() + (float) sizeY() / 2);
 	}
 
 	/**
 	 * Returns the array containing the normals of all edges of the shape.
+	 * 
 	 * @return Array of the normal planes.
 	 */
 	public Direction[] getNormals()
@@ -280,6 +299,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the number of normals of this shape.
+	 * 
 	 * @return Number of normals.
 	 */
 	public int getNormalCount()
@@ -289,6 +309,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the angle of motion.
+	 * 
 	 * @return Angle of motion.
 	 */
 	public double getAngle()
@@ -298,6 +319,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the friction of the surface of this shape.
+	 * 
 	 * @return Friction of the shape.
 	 */
 	public double getFriction()
@@ -307,6 +329,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the mass of the shape.
+	 * 
 	 * @return Mass of shape.
 	 */
 	public int getMass()
@@ -316,6 +339,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the current speed of the shape.
+	 * 
 	 * @return Current speed.
 	 */
 	public double getSpeed()
@@ -325,6 +349,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the x coordinate of the top left corner of the shape.
+	 * 
 	 * @return Top left corner x coordinate as an integer value.
 	 */
 	public int X()
@@ -334,15 +359,17 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the y coordinate of the top left corner of the shape.
+	 * 
 	 * @return Top left corner y coordinate as an integer value.
 	 */
 	public int Y()
 	{
 		return (int) y_pos;
 	}
-	
+
 	/**
 	 * Returns the x coordinate of the top left corner of the shape.
+	 * 
 	 * @return Top left corner x coordinate as a float value.
 	 */
 	public float Xf()
@@ -352,6 +379,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the y coordinate of the top left corner of the shape.
+	 * 
 	 * @return Top left corner y coordinate as a float value.
 	 */
 	public float Yf()
@@ -361,6 +389,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the height of the shape.
+	 * 
 	 * @return Height of the shape.
 	 */
 	public int sizeX()
@@ -370,6 +399,7 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Returns the width of the shape.
+	 * 
 	 * @return Width of the shape.
 	 */
 	public int sizeY()
@@ -378,7 +408,9 @@ public abstract class Shape implements DataObjectBase<Shape> {
 	}
 
 	/**
-	 * Identifies the shape as elliptical or not. This means that it is not defined by vertices.
+	 * Identifies the shape as elliptical or not. This means that it is not
+	 * defined by vertices.
+	 * 
 	 * @return Boolean value of whether or not the shape is round.
 	 */
 	public boolean isRound()
@@ -393,7 +425,9 @@ public abstract class Shape implements DataObjectBase<Shape> {
 
 	/**
 	 * Copies all the data from this shape into the given shape s.
-	 * @param s : Shape to copy data into.
+	 * 
+	 * @param s
+	 *            : Shape to copy data into.
 	 */
 	protected void copyData(Shape s)
 	{

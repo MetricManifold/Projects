@@ -1,47 +1,46 @@
 package munjena_kotska;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
-public class Main 
+public class Main
 {
-	public static void main(String args[]) throws InterruptedException {
-		
-		// Delay between ticks.
-		int delay = 10;
+	final static Dimension SDIM = Toolkit.getDefaultToolkit().getScreenSize();
+	final static double WIDTH = SDIM.getWidth();
+	final static double HEIGHT = SDIM.getHeight();
+	final static int DELAY = 20;
 
-		GameBoard.C.setLocation((1920 / 2) - 400, (1080 / 2) - 400);
-		GameBoard.C.setBackgroundColor(Color.BLACK);
-		GameBoard.C.clear();		
-		
-		ObjectMan.spawn();
+	public static void main(String args[]) throws InterruptedException
+	{
+		final int locX = (int) (WIDTH - GameBoard.SIZE_X) / 2;
+		final int locY = (int) (HEIGHT - GameBoard.SIZE_Y) / 2 - 20;
+		final Color bg = Color.BLACK;
 
-		do 
+		GameBoard GB = new GameBoard(locX, locY, bg);
+		ObjectMan OM = new ObjectMan(GB);
+
+		do
 		{
-			synchronized (GameBoard.C) {
-				
-				// Draw the background.
-				GameBoard.drawBoard();
-				GameBoard.drawPlayableArea();		
-				
+			long s = System.nanoTime();
+			synchronized (GB.C)
+			{
+
 				// Register key presses.
-				KeyDirective.checkPlayerMoveKeys();	
-				
+				KeyDirective.checkPlayerMoveKeys(GB);
+
 				// Spawn Entities.
-				ObjectMan.spawn();				
-				
+				OM.spawn();
+
 				// Update the entities.
-				ObjectMan.playerBounds(GameBoard.P);
-				ObjectMan.update(0);
-				ObjectMan.mapBounds(0);					
-								
-				// Draw the UI.
-				UIDirective.draw();
-				
+				GB.update();
+				OM.update();
+
 			}
 
-			Thread.sleep(delay);
-		}
-		while (true);
+			long e = System.nanoTime();
+			Thread.sleep(DELAY - (e - s) / 1000000);
+		} while (true);
 
 	}
 }

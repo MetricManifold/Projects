@@ -1,127 +1,127 @@
 package munjena_kotska;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 
 /**
  * Handles and delegates all objects on the game board.
+ * 
  * @author Robert
  *
  */
-public class ObjectMan {
+public class ObjectMan
+{
+	int spawn_interval = 20, spawn_tracker = 0, spawn_min = 6;
+	int numEntities = 0;
 
-	static List<Entity> entities = new ArrayList<Entity>();
+	static final double moveXmin = 3L, moveXmax = 6L;
 	
-	static int spawn_interval = 100;
-	static int spawn_tracker = 0;
+	List<Entity> entities = new ArrayList<Entity>();
+	GameBoard GB;
 
-	/**
-	 * Handles collision between all entities on the game board.
-	 * @param index : Index along the entities list.
-	 */
-	public static void update(int index)
+	public ObjectMan(GameBoard GB)
 	{
-		if (index == entities.size())
-			return;
-		
-		entities.get(index).move();
-		entities.get(index).draw();
-		
-		Entity remove = null;
-		
-		for (Entity e : entities)
-		{
-			if (e == entities.get(index))
-				continue;
-
-			// Collision check.
-			if (Math.abs(e.posX - entities.get(index).posX) < (e.sizeX + entities.get(index).sizeX) / 2 && 
-					Math.abs(e.posY - entities.get(index).posY) < (e.sizeY + entities.get(index).sizeY) / 2)
-				remove = e;
-
-		}
-		
-		if (remove != null)
-		{
-			entities.remove(index);
-			entities.remove(remove);
-		}
-		
-		
-		update(index + 1);	
-		
+		this.GB = GB;
 	}
 
 	/**
-	 * Handles map bounds collisions for meteors only.
-	 * @param index : Index along the entities list.
+	 * Returns the aabb collision check between two objects
+	 * 
+	 * @param a
+	 *            first object
+	 * @param b
+	 *            second object
+	 * @return
 	 */
-	public static void mapBounds(int index)
+	private boolean aabbCheck(Entity a, Entity b)
 	{
-		if (index == entities.size())
-			return;
-		
-		// Map bounds check.
-		if (entities.get(index).posY + entities.get(index).sizeY > GameBoard.SIZE_Y && 
-				!(entities.get(index) instanceof Player))
+		float spaceX = a.posX - b.posX;
+		float spaceY = a.posY - b.posY;
+
+		return (a != b &&
+				(spaceX > 0.0 && spaceX < b.sizeX || spaceX < 0.0 && spaceX > -a.sizeX) &&
+				(spaceY > 0.0 && spaceY < b.sizeY || spaceY < 0.0 && spaceY > -a.sizeY));
+	}
+
+	/**
+	 * Handles collision between all entities
+	 * 
+	 * @param e
+	 */
+	public void update()
+	{
+		List<Integer> toRemove = new ArrayList<Integer>();
+		Player P = GB.P;
+
+		for (int i = 0; i < numEntities; i++)
 		{
-			entities.remove(index);
+			Entity e = entities.get(i);
+
+			if (e.posY > GameBoard.SIZE_Y || aabbCheck(P, e))
+			{
+				toRemove.add(i);
+			}
+			else
+			{
+				for (int j = 0; j < numEntities; j++)
+				{
+					Entity f = entities.get(i);
+					if (aabbCheck(e, f))
+					{
+						toRemove.add(i);
+					}
+				}
+
+				e.move();
+				e.draw(GB.C);
+			}
 		}
 
-		mapBounds(index + 1);
+		for (int i : toRemove)
+		{
+			removeEntity(i);
+		}
+
+		// player update
+		P.move();
+		P.draw(GB.C);
 	}
-	
+
 	/**
 	 * Handles the spawning of meteors on the board.
 	 */
-	public static void spawn()
+	public void spawn()
 	{
-		spawn_tracker = (spawn_tracker + 1) % spawn_interval;
-		
-		if (spawn_tracker != 0)
-			return;
-		
-		int randomX = 0;		
-		Meteor M = new Meteor(randomX, 0);
-		M.setDirection(0, 5);
-		
+		if (spawn_tracker++ == 0)
+		{
+			int spawnX = ThreadLocalRandom.current().nextInt(GameBoard.P_BOUNDS_X0, GameBoard.SIZE_X);
+			float moveY = (float) ThreadLocalRandom.current().nextDouble(moveXmin, moveXmax);
+
+			Entity M = appendEntity(new Meteor(spawnX, 0));
+			M.setDirection(0, moveY);
+
+			if (spawn_interval > spawn_min) spawn_interval--;
+		}
+		spawn_tracker %= spawn_interval;
 	}
-	
+
 	/**
-	 * Adds an Entity to the entity list.
+	 * Adds an Entity to the entity list and returns it
+	 * 
 	 * @param e
 	 */
-	public static void addEntity(Entity e)
+	public Entity appendEntity(Entity e)
 	{
 		entities.add(e);
+		numEntities++;
+		return e;
 	}
-	
-	public static void playerBounds(Player P)
+
+	public void removeEntity(int index)
 	{
-		float moveX = P.moveX, moveY = P.moveY;
-		
-		if (P.posX <= GameBoard.P_BOUNDS_X0 && moveX < 0)
-		{
-			P.posX = GameBoard.P_BOUNDS_X0;
-			moveX = 0;
-		}
-		if (P.posX + P.sizeX >= GameBoard.SIZE_X && moveX > 0)
-		{
-			P.posX = GameBoard.SIZE_X - P.sizeY;
-			moveX = 0;
-		}
-		if (P.posY <= GameBoard.P_BOUNDS_Y0 && moveY < 0)
-		{
-			P.posY = GameBoard.P_BOUNDS_Y0;
-			moveY = 0;
-		}
-		if (P.posY + P.sizeY >= GameBoard.SIZE_Y && moveY > 0)
-		{
-			P.posY = GameBoard.SIZE_Y - P.sizeY;
-			moveY = 0;
-		}
-		
-		P.setDirection(moveX, moveY);
+		entities.remove(index);
+		numEntities--;
 	}
 
 }

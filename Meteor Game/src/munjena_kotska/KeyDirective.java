@@ -4,34 +4,40 @@ import hsa_ufa.Console;
 
 /**
  * Handles key actions.
+ * 
  * @author Robert
  *
  */
-public class KeyDirective {
+public class KeyDirective
+{
 
 	/**
 	 * Checks the player movement keys (
 	 */
-	public static void checkPlayerMoveKeys()
+	public static void checkPlayerMoveKeys(GameBoard GB)
 	{
-		Console C = GameBoard.C;
-		Player P = GameBoard.P;
+		Console C = GB.C;
+		Player P = GB.P;
 
 		int moveX = 0, moveY = 0;
-
-		if (C.isKeyDown('A')) {
+		
+		if (C.isKeyDown('A'))
+		{
 			moveX--;
 		}
 
-		if (C.isKeyDown('D')) {
+		if (C.isKeyDown('D'))
+		{
 			moveX++;
 		}
 
-		if (C.isKeyDown('W')) {
+		if (C.isKeyDown('W'))
+		{
 			moveY--;
 		}
 
-		if (C.isKeyDown('S')) {
+		if (C.isKeyDown('S'))
+		{
 			moveY++;
 		}
 

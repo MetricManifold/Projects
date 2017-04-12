@@ -14,50 +14,59 @@ package hsa_ufa;
 
 import java.awt.*;
 
-public class FatalError extends CloseableDialog 
+public class FatalError extends CloseableDialog
 {
-  private java.awt.Button quitButton;
-  /**
-   * Contructor - FatalError to be displayed on centre of screen.
-   *
-   * @param message The message to be displayed in the FatalError dialog box.
-   */
-  public FatalError (String message)
-  {
-    this (message, null);
-  } // Constructor - FatalError (String)
-  /**
-   * Contructor - FatalError to be displayed on centre of a specified Frame.
-   *
-   * @param message The message to be displayed in the FatalError dialog box.
-   * @param frame The Frame that the dialog box should be centred on.
-   */
-  public FatalError (String message, Frame frame)
-  {
-    // Create the dialog.
-    super (frame, "Fatal Error");
-    
-    setBackground (Color.lightGray);
-    
-    // Put the message at the top
-    add ("Center", new Label ("  " + message + "  ", Label.CENTER));
-    
-    // Put OK button at bottom
-    quitButton = new Button ("Quit");
-    quitButton.addActionListener (this);
-    Panel p = new Panel ();
-    p.setLayout (new FlowLayout (FlowLayout.CENTER, 0, 0));
-    p.add (quitButton);
-    add ("South", p);
-    
-    pack ();
-    
-    positionDialog (frame);
-    
-    Message.beep ();
-    
-    setVisible (true);
-    
-    System.exit (0);
-  } // Constructor - FatalError (String, Frame)
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private java.awt.Button quitButton;
+
+	/**
+	 * Contructor - FatalError to be displayed on centre of screen.
+	 *
+	 * @param message
+	 *            The message to be displayed in the FatalError dialog box.
+	 */
+	public FatalError(String message)
+	{
+		this(message, null);
+	} // Constructor - FatalError (String)
+
+	/**
+	 * Contructor - FatalError to be displayed on centre of a specified Frame.
+	 *
+	 * @param message
+	 *            The message to be displayed in the FatalError dialog box.
+	 * @param frame
+	 *            The Frame that the dialog box should be centred on.
+	 */
+	public FatalError(String message, Frame frame)
+	{
+		// Create the dialog.
+		super(frame, "Fatal Error");
+
+		setBackground(Color.lightGray);
+
+		// Put the message at the top
+		add("Center", new Label("  " + message + "  ", Label.CENTER));
+
+		// Put OK button at bottom
+		quitButton = new Button("Quit");
+		quitButton.addActionListener(this);
+		Panel p = new Panel();
+		p.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		p.add(quitButton);
+		add("South", p);
+
+		pack();
+
+		positionDialog(frame);
+
+		Message.beep();
+
+		setVisible(true);
+
+		System.exit(0);
+	} // Constructor - FatalError (String, Frame)
 } /* FatalError class */

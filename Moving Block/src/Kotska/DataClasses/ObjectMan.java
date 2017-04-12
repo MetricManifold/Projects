@@ -1,4 +1,4 @@
-package Kotska.DataClasses;
+package DataClasses;
 
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -7,27 +7,33 @@ import java.util.Random;
 
 import Kotska.Physics;
 import Kotska.Player;
-import Kotska.Object.Shape;
+import Object.Shape;
 
-public class ObjectMan {
+public class ObjectMan
+{
 
 	private static LinkedList<Shape> OBJECTS = new LinkedList<Shape>();
 	private static Queue<Shape> ACTIVE_OBJECTS = new LinkedList<Shape>();
 
 	/**
 	 * Will add a new shape to the OBJECTS array.
-	 * @param shape : a list of the shapes.
+	 * 
+	 * @param shape
+	 *            : a list of the shapes.
 	 */
 	public static void addObjects(Shape... shape)
 	{
-		//The elements array will automatically be expanded if the maximum number of elements have been reached
+		// The elements array will automatically be expanded if the maximum
+		// number of elements have been reached
 		for (Shape s : shape)
 			OBJECTS.add(s);
 	}
 
 	/**
 	 * Adds an object to the array of objects which require state updates.
-	 * @param shape : The object to be added.
+	 * 
+	 * @param shape
+	 *            : The object to be added.
 	 */
 	public static void addActiveObject(Shape shape)
 	{
@@ -51,12 +57,12 @@ public class ObjectMan {
 	public static void update()
 	{
 		Queue<Shape> temp = new LinkedList<Shape>();
-		
+
 		while (!ACTIVE_OBJECTS.isEmpty())
 		{
 			temp.add(ACTIVE_OBJECTS.remove());
 		}
-		
+
 		while (!temp.isEmpty())
 		{
 			temp.remove();
@@ -74,7 +80,7 @@ public class ObjectMan {
 		Shape itr_shape;
 
 		ListIterator<Shape> ol = OBJECTS.listIterator();
-		
+
 		while (ol.hasNext())
 		{
 			itr_shape = ol.next();
@@ -87,11 +93,12 @@ public class ObjectMan {
 				Physics.addActiveObject(itr_shape);
 			}
 		}
-		
+
 	}
 
 	/**
 	 * Will return the array of all objects in the game.
+	 * 
 	 * @return OBJECTS
 	 */
 	public static Shape[] getObjects()
@@ -101,12 +108,12 @@ public class ObjectMan {
 
 	/**
 	 * Returns the number of objects in the game.
+	 * 
 	 * @return OBJECTS size
 	 */
 	public static int getObjectCount()
 	{
 		return OBJECTS.size();
 	}
-
 
 }

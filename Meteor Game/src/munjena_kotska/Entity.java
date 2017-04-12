@@ -1,8 +1,10 @@
 package munjena_kotska;
 
 import java.awt.Color;
+import hsa_ufa.Console;
 
-public abstract class Entity {
+public abstract class Entity
+{
 
 	// Entity attributes.
 	int sizeX, sizeY;
@@ -14,6 +16,7 @@ public abstract class Entity {
 
 	/**
 	 * Creates a new Entity.
+	 * 
 	 * @param posX
 	 * @param posY
 	 * @param sizeX
@@ -25,20 +28,17 @@ public abstract class Entity {
 		this.posY = posY;
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
-
-		ObjectMan.addEntity(this);
 	}
 
 	/**
 	 * Draws the Entity to the screen.
 	 */
-	public void draw()
+	public void draw(Console C)
 	{
-		GameBoard.C.setColor(color);
-		GameBoard.C.fillRect((int) posX, (int) posY, sizeX, sizeY);
-		GameBoard.C.setColor(Color.black);
-		GameBoard.C.drawRect((int) posX, (int) posY, sizeX, sizeY);
-
+		C.setColor(color);
+		C.fillRect((int) posX, (int) posY, sizeX, sizeY);
+		C.setColor(Color.black);
+		C.drawRect((int) posX, (int) posY, sizeX, sizeY);
 	}
 
 	/**
@@ -52,6 +52,7 @@ public abstract class Entity {
 
 	/**
 	 * Sets Entity direction.
+	 * 
 	 * @param moveX
 	 * @param moveY
 	 */
@@ -60,6 +61,5 @@ public abstract class Entity {
 		this.moveX = moveX;
 		this.moveY = moveY;
 	}
-
 
 }
