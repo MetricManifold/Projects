@@ -1,10 +1,8 @@
 package game.objects;
 
-public class Ship
+public abstract class Ship
 {
-	
-	Ship()
-	{
-		
-	}
+	final protected float speed = 1.0f;
+	protected int power;
+	protected int armor;
 }
