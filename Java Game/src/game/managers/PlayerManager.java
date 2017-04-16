@@ -1,6 +1,5 @@
 package game.managers;
 
-import game.objects.Destroyer;
 import game.players.Player;
 
 /**
@@ -11,28 +10,29 @@ import game.players.Player;
  */
 public class PlayerManager
 {
-	private static final int NUM_PLAYERS = 2;
-
-	private Player player;
-	private int playerIndex = 0;
-	private Player[] players = new Player[NUM_PLAYERS];
-
-	public Class<?> defaultShip = Destroyer.class;
+	private int playerIndex = 1;
+	private Player[] players;
+	public final Player neutral;
 
 	public PlayerManager()
 	{
-		for (int i = 0; i < NUM_PLAYERS; i++)
-		{
-			players[i] = new Player();
-		}
+		int numPlayers = ConfigurationManager.numPlayers;
 
-		player = players[playerIndex];
+		players = new Player[numPlayers];
+		neutral = new Player(0, ConfigurationManager.COLORS[0]);
+
+		for (int i = 0; i < numPlayers; i++)
+		{
+			players[i] = new Player(i, ConfigurationManager.COLORS[i]);
+		}
 	}
 
 	public void nextPlayer()
 	{
-		playerIndex = (playerIndex + 1) % NUM_PLAYERS;
-		player = players[playerIndex];
+		do
+		{
+			playerIndex = playerIndex % (ConfigurationManager.numPlayers - 1) + 1;
+		} while (players[playerIndex].isAlive());
 	}
 
 	/**
@@ -42,7 +42,7 @@ public class PlayerManager
 	 */
 	public Player getCurrentPlayer()
 	{
-		return player;
+		return players[playerIndex];
 	}
 
 	/**
@@ -51,15 +51,20 @@ public class PlayerManager
 	 * @param num
 	 * @return
 	 */
-	public boolean canSend(int num)
+	public boolean canSend(Player p, int num)
 	{
-		if (player.getOrigin() == null)
-		{
-			return false;
-		}
-		else
-		{
-			return num >= player.getOrigin().getShipInventory().getCount(defaultShip);
-		}
+		if (p.getOrigin() == null) return false;
+		else return num <= p.getOrigin().getShipInventory().getCount(ConfigurationManager.defaultShip);
+	}
+
+	/**
+	 * Returns the player at the current index
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public Player getPlayer(int index)
+	{
+		return players[index];
 	}
 }

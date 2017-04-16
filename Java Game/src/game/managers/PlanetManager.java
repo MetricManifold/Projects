@@ -1,14 +1,19 @@
 package game.managers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
 
 import game.objects.Planet;
 import game.objects.Space;
+import game.players.Player;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -19,31 +24,30 @@ public class PlanetManager
 {
 	// static values for ui
 	public static final int PADH = 8, PADV = 8,
-			TILEH = 20, TILEV = 20, 
+			TILEH = 20, TILEV = 20,
 			NUM_P_BG = 4, NUM_B_BG = 4,
-			MARGIN = 5, TOPMARGIN = 10;
+			MARGIN = 5, TOPMARGIN = 2;
 
 	// planets and corresponding buttons
-	private Space[] tiles;
-	private int x, y, len;
-	private double density;
-	//private BuildManager bm = new BuildManager();
-	
-	public int maxh, maxv;
-	public TilePane tilePane = new TilePane(Orientation.HORIZONTAL);
-	public Map<Integer, Planet> planets = new HashMap<Integer, Planet>();
+	private Map<Space, Label> tiles = new HashMap<Space, Label>();
+	private Map<Integer, Planet> planets = new HashMap<Integer, Planet>();
 
-	public PlanetManager(int x, int y, double density)
+	private int maxh, maxv, x, y, len;
+	private double density;
+
+	public TilePane tilePane = new TilePane(Orientation.HORIZONTAL);
+
+	public PlanetManager()
 	{
 		// initialize local variables
-		this.x = x;
-		this.y = y;
-		this.density = density;
+		this.x = ConfigurationManager.gridX;
+		this.y = ConfigurationManager.gridY;
+		this.density = ConfigurationManager.planetDensity;
+
 		this.maxh = (TILEH + PADH) * x + MARGIN * 2;
 		this.maxv = (TILEV + PADV) * y + MARGIN * 2;
 
-		len = x * y;
-		tiles = new Space[len];
+		this.len = x * y;
 
 		makeTilePaneUI(); // 		setup tilepane UI
 		makePlanets(); // 			create the planets on this grid
@@ -52,9 +56,35 @@ public class PlanetManager
 	}
 
 	/**
+	 * Sets the properties related to tilepane UI
+	 */
+	void makeTilePaneUI()
+	{
+		VBox.setMargin(tilePane, new Insets(TOPMARGIN, 0, 0, 0));
+
+		tilePane.setHgap(PADH);
+		tilePane.setVgap(PADV);
+
+		tilePane.setPrefTileWidth(TILEH);
+		tilePane.setPrefTileHeight(TILEV);
+
+		tilePane.setPrefColumns(x);
+		tilePane.setPrefRows(y);
+
+		tilePane.setMaxSize(maxh, maxv);
+		tilePane.setPadding(new Insets(MARGIN, MARGIN, MARGIN, MARGIN));
+		tilePane.setAlignment(Pos.BASELINE_CENTER);
+
+		String bgSelect = "planet-grid" + String.valueOf(ThreadLocalRandom.current().nextInt(NUM_B_BG) + 1);
+		tilePane.getStyleClass().addAll(bgSelect, "planet-grid");
+
+		System.out.println("created grid ui");
+	}
+
+	/**
 	 * Sets the mouse event associated with the tilepane to find all the grid locations
 	 */
-	public void setMouseEvent(PlayerManager pm)
+	public void setEvents(PlayerManager pm, TurnManager tm)
 	{
 		tilePane.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
@@ -63,23 +93,78 @@ public class PlanetManager
 			{
 				double sx = (event.getX() - MARGIN) / (TILEH + PADH); // 	normalized selected x
 				double sy = (event.getY() - MARGIN) / (TILEV + PADV); // 	normalized selected y
-				double dx = sx - (int) sx; //							fractional distance x
-				double dy = sy - (int) sy; // 							fractional distance y
+				int ix = (int) sx; //										integer distance x
+				int iy = (int) sy; //										integer distance y
+				double dx = sx - ix; //										fractional distance x
+				double dy = sy - iy; // 									fractional distance y
 
 				// check if selection is before padding
 				if (dx < PADH / (TILEH / PADH) && dy < PADV / (TILEV / PADV))
 				{
-					Planet p = planets.get(hashLocation((int) sx, (int) sy));
+					Planet p = planets.get(hashLocation(ix, iy));
+					Planet o = pm.getCurrentPlayer().getOrigin();
+					Planet d = pm.getCurrentPlayer().getDestination();
+
 					pm.getCurrentPlayer().clickTile(p);
-				}
-				else
-				{
-					pm.getCurrentPlayer().clearSelection();
+
+					if (p != null)
+					{
+						if (o == null)
+						{
+							tiles.get(p).getStyleClass().add("space-button-origin");
+						}
+						else if (d == null)
+						{
+							if (p != o)
+							{
+								tiles.get(p).getStyleClass().add("space-button-destination");
+								tm.enableSend(true);
+							}
+						}
+						else
+						{
+							tiles.get(p).getStyleClass().add("space-button-origin");
+							clearSelection(o, d);
+							tm.enableSend(false);
+						}
+					}
+					else
+					{
+						clearSelection(o, d);
+						tm.enableSend(false);
+					}
 				}
 			}
 		});
 
-		System.out.println("set mouse event");
+		makeStartPlanets(pm);
+
+		System.out.println("set events");
+	}
+
+	/**
+	 * Clears the current selection from the grid
+	 * 
+	 * @param origin
+	 * @param destination
+	 */
+	public void clearSelection(Planet origin, Planet destination)
+	{
+		if (origin != null)
+		{
+			tiles.get(origin).getStyleClass().remove("space-button-origin");
+		}
+		if (destination != null)
+		{
+			tiles.get(destination).getStyleClass().remove("space-button-destination");
+		}
+	}
+
+	public void givePlanet(Player player, Planet p)
+	{
+		player.givePlanet(p);
+		p.setOwner(player);
+		tiles.get(p).getStyleClass().add(player.getColor());
 	}
 
 	/**
@@ -103,47 +188,67 @@ public class PlanetManager
 			double prob = ThreadLocalRandom.current().nextDouble();
 			if (prob < density)
 			{
+				Planet p = new Planet(s);
 				String bgSelect = "planet-button" + String.valueOf(ThreadLocalRandom.current().nextInt(NUM_P_BG) + 1);
 				l.getStyleClass().addAll(bgSelect, "space-button");
+				
+				l.setOnMouseEntered(new EventHandler<MouseEvent>()
+				{
+					@Override
+					public void handle(MouseEvent event)
+					{
+						Point2D pnt = l.localToScreen(l.getLayoutBounds().getMaxX(), l.getLayoutBounds().getMaxY());
+						p.getTooltip().show(l, pnt.getX(), pnt.getY());
+					}
+				});
+				l.setOnMouseExited(new EventHandler<MouseEvent>()
+				{
 
-				Planet p = new Planet(s);
-				tiles[i] = p;
+					@Override
+					public void handle(MouseEvent event)
+					{
+						p.getTooltip().hide();
+					}
+				});
+
+				tiles.put(p, l);
 				planets.put(hashLocation(i % x, i / y), p);
 			}
 			else
 			{
 				l.getStyleClass().add("space-button");
-				tiles[i] = s;
+				tiles.put(s, l);
 			}
 		}
 
 		System.out.println("placed planets in grid");
 	}
 
-	/**
-	 * Sets the properties related to tilepane UI
-	 */
-	void makeTilePaneUI()
+	void makeStartPlanets(PlayerManager pm)
 	{
-		VBox.setMargin(tilePane, new Insets(TOPMARGIN, 0, 0, 0));
+		// make a list of planets to choose from
+		int numPlayers = ConfigurationManager.numPlayers;
+		Planet[] planetArray = getPlanetArray();
 
-		tilePane.setHgap(PADH);
-		tilePane.setVgap(PADV);
+		// make a list denoting each of the planets
+		List<Integer> nums = new ArrayList<Integer>();
+		for (Integer i : IntStream.range(0, planets.size()).toArray())
+			nums.add(i);
 
-		tilePane.setPrefTileWidth(TILEH);
-		tilePane.setPrefTileHeight(TILEV);
+		while (numPlayers-- > 0)
+		{
+			// pick a random value from the planet array
+			int r = ThreadLocalRandom.current().nextInt(nums.size());
+			int pick = nums.get(r);
 
-		tilePane.setPrefColumns(x);
-		tilePane.setPrefRows(y);
+			givePlanet(pm.getPlayer(numPlayers), planetArray[pick]);
+			nums.remove(r);
+		}
 
-		tilePane.setMaxSize(maxh, maxv);
-		tilePane.setPadding(new Insets(MARGIN, MARGIN, MARGIN, MARGIN));
-		tilePane.setAlignment(Pos.CENTER);
-
-		String bgSelect = "planet-grid" + String.valueOf(ThreadLocalRandom.current().nextInt(NUM_B_BG) + 1);
-		tilePane.getStyleClass().addAll(bgSelect, "planet-grid");
-
-		System.out.println("created grid ui");
+		for (int n : nums)
+		{
+			givePlanet(pm.neutral, planetArray[n]);
+		}
 	}
 
 	/**
@@ -156,6 +261,21 @@ public class PlanetManager
 	int hashLocation(int x, int y)
 	{
 		return x + this.x * y;
+	}
+
+	public Planet[] getPlanetArray()
+	{
+		return planets.values().toArray(new Planet[planets.size()]);
+	}
+
+	public int getSizeX()
+	{
+		return maxh;
+	}
+
+	public int getSizeY()
+	{
+		return maxv;
 	}
 
 }

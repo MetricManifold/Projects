@@ -1,14 +1,24 @@
 package game.players;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import game.objects.Planet;
 import game.objects.Space;
 
 public class Player
 {
 	private Planet origin, destination;
-
-	public Player()
+	private List<Planet> planets = new ArrayList<Planet>();
+	private int num;
+	private String color;
+	private boolean status = true;
+	
+	public Player(int num, String color)
 	{
+		this.num = num;
+		this.color = color;
+		
 		origin = null;
 		destination = null;
 	}
@@ -35,26 +45,30 @@ public class Player
 
 	public void clickTile(Space s)
 	{
-		if (s instanceof Planet)
+		if (s != null && s instanceof Planet)
 		{
+			Planet p = (Planet) s;
+
 			if (origin == null)
 			{
-				origin = (Planet) s;
+				origin = p;
 			}
 			else if (destination == null)
 			{
-				destination = (Planet) s;
+				if (p != origin)
+				{
+					destination = p;
+				}
 			}
 			else
 			{
-				origin = (Planet) s;
+				origin = p;
 				destination = null;
 			}
 		}
 		else
 		{
-			origin = null;
-			destination = null;
+			clearSelection();
 		}
 	}
 
@@ -62,5 +76,40 @@ public class Player
 	{
 		origin = null;
 		destination = null;
+	}
+	
+	public void givePlanet(Planet p)
+	{
+		planets.add(p);
+	}
+	
+	public void removePlanet(Planet p)
+	{
+		planets.remove(p);
+	}
+	
+	public int getNum()	
+	{
+		return num;
+	}
+	
+	public String getColor()
+	{
+		return color;
+	}
+	
+	public void setColor(String color)
+	{
+		this.color = color;
+	}
+	
+	public String getName()
+	{
+		return "Player " + Integer.valueOf(num);
+	}
+	
+	public boolean isAlive()
+	{
+		return status;
 	}
 }
