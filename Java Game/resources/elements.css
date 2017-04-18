@@ -26,11 +26,11 @@
 /* PLANET BUTTONS */
 
 .space-button-origin {
-	-fx-border-color: lightblue;
+	-fx-effect: dropshadow(gaussian, lightblue, 6, 0.2, 0, 0);
 }
 
 .space-button-destination {
-	-fx-border-color: lightblue;
+	-fx-effect: dropshadow(gaussian, pink, 6, 0.2, 0, 0);
 }
 
 .space-button:hover {
@@ -38,33 +38,33 @@
 }
 
 .space-button {
-	-fx-border-width: 2px;
+	-fx-border-width: 4px;
 	-fx-border-radius: 50%;
 
 	-fx-background-radius: 50%;
-	-fx-padding: 5px;
-
-	-fx-background-repeat: no-repeat;
-	-fx-background-size: cover;
 	-fx-background-size: 80% 80%;
 	-fx-background-position: center;
-
+	-fx-background-repeat: no-repeat;
 }
 
 .planet-button1 {
 	-fx-background-image: url("planet1.png");
+	-fx-cursor: hand;
 }
 
 .planet-button2 {
 	-fx-background-image: url("planet2.png");
+	-fx-cursor: hand;
 }
 
 .planet-button3 {
 	-fx-background-image: url("planet3.png");
+	-fx-cursor: hand;
 }
 
 .planet-button4 {
 	-fx-background-image: url("planet4.png");
+	-fx-cursor: hand;
 }
 
 /* TURN BAR */
@@ -76,7 +76,6 @@
 
 .player-label {
 	-fx-padding: 3px;
-	-fx-background-radius: 3px;
 
 	-fx-text-fill: white;
 	-fx-font-weight: bold;
@@ -85,60 +84,79 @@
 	-fx-alignment: center;
 }
 
+.turn-bar-button {
+	-fx-min-width: 80px;
+	-fx-padding: 3px;
+}
+
 /* PLAYER COLORS */
 
 .blue {
 	-fx-background-color: rgba(0, 0, 255, 0.75);
+	-fx-fill: rgb(0, 0, 255);
 }
 
 .red {
 	-fx-background-color: rgba(255, 0, 0, 0.75);
+	-fx-fill: rgb(255, 0, 0);
 }
 
 .orange {
 	-fx-background-color: rgba(255, 153, 0, 0.75);
+	-fx-fill: rgb(255, 153, 0);
 }
 
 .teal {
 	-fx-background-color: rgba(0, 153, 153, 0.75);
+	-fx-fill: rgb(0, 153, 153);
 }
 
 .purple {
 	-fx-background-color: rgba(153, 102, 255, 0.75);
+	-fx-fill: rgb(153, 102, 255);
 }
 
 .pink {
 	-fx-background-color: rgba(255, 153, 204, 0.75);
+	-fx-fill: rgb(255, 153, 204);
 }
 
 .gray {
 	-fx-background-color: rgba(102, 153, 153, 0.75);
+	-fx-fill: rgb(102, 153, 153);
 }
 
 .white {
 	-fx-background-color: rgba(255, 255, 255, 0.75);
+	-fx-fill: rgb(255, 255, 255);
 }
 
 .yellow {
 	-fx-background-color: rgba(255, 255, 0, 0.75);
+	-fx-fill: rgb(255, 255, 0);
 }
 
-.dark-blue {
+.darkblue {
 	-fx-background-color: rgba(0, 51, 204, 0.75);
+	-fx-fill: rgb(0, 51, 204);
 }
 
 .green {
 	-fx-background-color: rgba(51, 204, 51, 0.75);
+	-fx-fill: rgb(51, 204, 51);
 }
 
-.light-green {
+.lightgreen {
 	-fx-background-color: rgba(0, 255, 0, 0.75);
+	-fx-fill: rgb(0, 255, 0);
 }
 
-.light-blue {
+.lightblue {
 	-fx-background-color: rgba(0, 255, 255, 0.75);
+	-fx-fill: rgb(0, 255, 255);
 }
 
 .brown {
 	-fx-background-color: rgba(153, 102, 51, 0.75);
+	-fx-fill: rgb(153, 102, 51);
 }
