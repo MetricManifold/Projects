@@ -5,17 +5,18 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import game.entities.Destroyer;
+import game.entities.Ship;
 
 public class ConfigurationManager
 {
 	public static int shipStartCount = 10,
-		numPlayers = 3, playerMax = 14,
+		numPlayers = 2, playerMax = 14,
 		gridX = 25, gridY = 25;
 
 	public static double planetDensity = 0.15,
-		neutralProdModifier = 0.50,
+		neutralProdModifier = 0.30,
 		planetDefenderBonus = 1.08;
-	public static Class<?> defaultShip = Destroyer.class;
+	public static Class<? extends Ship> defaultShip = Destroyer.class;
 
 	public static final String[] COLORS = {
 		"white", "red", "blue", "orange", "teal", "purple",
@@ -25,14 +26,15 @@ public class ConfigurationManager
 	public static class PlanetName
 	{
 		public static List<String> pickedNames = new ArrayList<String>();
-		public static final String[] NAMES_PRE = { "Bara-", "Qual'", "Ban'Da-", "Ki'", "Muan'" },
+		public static final String[] NAMES_PRE = { "Bara-", "Qual'", "Ban'Da-", "Ki'", "Muan'",
+				"El ", "Governorate of ", "Em ", "Fex-"},
 			NAMES = { "Tor", "Zora", "Selenium", "Utrazym", "Tooh", "Hok", "Ytvanix", "Xerxes",
 				"Rossya", "Beluvky", "Keztelim", "Ferenz", "Zork", "Zelenium", "Hercules",
 				"Uttica", "Calaman", "Kataman", "Waldin", "Soris", "Xirix", "Ethnor", "Lesnos",
 				"Irvel", "Ulnabazimda", "Goron", "Gez" },
 			NAMES_SUF = { "I", "II", "III", "V", "VI", "VII", "VIII", "XI", "Star", "Prime",
 				"Inferior", "Minor", "Superior", "Capitol", "Alliance", "Prison", "Colony" };
-		public static final double NAMES_PRE_PROB = 0.3, NAMES_SUF_PROB = 0.5;
+		public static final double NAMES_PRE_PROB = 0.15, NAMES_SUF_PROB = 0.5;
 
 		public static int index = 0;
 

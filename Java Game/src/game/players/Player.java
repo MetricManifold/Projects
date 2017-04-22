@@ -89,9 +89,15 @@ public class Player
 	 * 
 	 * @param p
 	 */
-	public void givePlanet(Planet p)
+	public void addPlanet(Planet p)
 	{
+		p.setOwner(this);
 		planets.add(p);
+	}
+	
+	public List<Planet> getPlanets()
+	{
+		return planets;
 	}
 
 	/**

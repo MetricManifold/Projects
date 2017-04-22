@@ -4,7 +4,6 @@ import game.managers.PlanetManager;
 import game.managers.PlayerManager;
 import game.managers.TurnManager;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -17,15 +16,15 @@ public class WindowManager extends Application
 	private TurnManager tm;
 	private PlayerManager lm;
 
-	public static final int PADX = 2, PADY = 2,
-			PX = 30, PY = 30,
-			SIZEX = 300, SIZEY = 250;
+	public static final int PX = 30, PY = 30, SIZEX = 300, SIZEY = 250;
 	public static final double D = 0.07;
 	public static final String TITLE = "Konquest II";
 
 	@Override
 	public void start(Stage primaryStage) throws Exception
 	{
+		javafx.scene.text.Font.getFamilies().forEach(f -> System.out.println(f));
+		
 		BorderPane border = new BorderPane(); //				layout the game in a border pane
 		Scene scene = new Scene(border); //						create the scene
 		VBox vb = new VBox(); //								create the box for the grid and turnbar
@@ -41,8 +40,8 @@ public class WindowManager extends Application
 		tm.setEvents(lm, pm);
 
 		border.setCenter(vb);
+		border.getStyleClass().add("scene");
 		vb.getChildren().addAll(tm.turnBar, pm.tilePane);
-		border.setPadding(new Insets(PADY, PADX, PADY, PADX));
 
 		primaryStage.setTitle(TITLE);
 		primaryStage.setScene(scene);

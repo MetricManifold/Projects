@@ -9,20 +9,19 @@ import java.util.Map;
 
 import game.entities.Ship;
 
-public class ShipGroup
+public abstract class ShipGroup
 {
-	protected Map<Class<?>, List<Ship>> ships = new HashMap<Class<?>, List<Ship>>();
+	protected Map<Class<? extends Ship>, List<Ship>> ships = new HashMap<>();
 
 	public ShipGroup()
-	{
-	}
+	{}
 
 	public ShipGroup(ShipGroup group)
 	{
 		this.ships = group.ships;
 	}
 
-	public ShipGroup(Class<?> type, int num)
+	public ShipGroup(Class<? extends Ship> type, int num)
 	{
 		add(type, num);
 	}
@@ -37,14 +36,11 @@ public class ShipGroup
 		add(ships);
 	}
 
-	public int getCount(Class<?> type)
+	public int getCount(Class<? extends Ship> type)
 	{
 		List<Ship> c = ships.get(type);
-
-		if (c == null)
-			return 0;
-		else
-			return c.size();
+		if (c == null) return 0;
+		else return c.size();
 	}
 
 	/**
@@ -55,7 +51,7 @@ public class ShipGroup
 	public int getCount()
 	{
 		int total = 0;
-		for (Class<?> type : ships.keySet())
+		for (Class<? extends Ship> type : ships.keySet())
 		{
 			total += getCount(type);
 		}
@@ -69,7 +65,7 @@ public class ShipGroup
 	 * @param type
 	 * @param num
 	 */
-	public void add(Class<?> type, int num)
+	public void add(Class<? extends Ship> type, int num)
 	{
 		if (ships.get(type) == null)
 		{
@@ -85,8 +81,7 @@ public class ShipGroup
 			}
 		}
 		catch (Exception e)
-		{
-		}
+		{}
 
 	}
 
@@ -97,7 +92,7 @@ public class ShipGroup
 	 */
 	public void add(Ship ship)
 	{
-		Class<?> type = ship.getClass();
+		Class<? extends Ship> type = ship.getClass();
 		if (ships.get(type) == null)
 		{
 			ships.put(type, Arrays.asList(ship));
@@ -117,7 +112,7 @@ public class ShipGroup
 	{
 		if (ships.size() > 0)
 		{
-			Class<?> type = ships.toArray()[0].getClass();
+			Class<? extends Ship> type = ships.iterator().next().getClass();
 			if (this.ships.get(type) == null)
 			{
 				this.ships.put(type, new ArrayList<>(ships));
@@ -143,6 +138,20 @@ public class ShipGroup
 	}
 
 	/**
+	 * remove the given equivalent shipgroup from this group
+	 * 
+	 * @param g
+	 * @throws Exception
+	 */
+	public void remove(ShipGroup g) throws Exception
+	{
+		for (List<Ship> l : g.ships.values())
+		{
+			remove(l);
+		}
+	}
+
+	/**
 	 * remove a given ship from this group
 	 * 
 	 * @param ship
@@ -151,17 +160,11 @@ public class ShipGroup
 	 */
 	public void remove(Ship ship) throws Exception
 	{
-		Class<?> type = ship.getClass();
+		Class<? extends Ship> type = ship.getClass();
 		List<Ship> l = ships.get(type);
 
-		if (l == null || l.isEmpty())
-		{
-			throw new Exception("attempted to remove ship that doesn't exist");
-		}
-		else
-		{
-			l.remove(ship);
-		}
+		if (l == null || l.isEmpty()) throw new Exception("attempted to remove ship that doesn't exist");
+		else l.remove(ship);
 	}
 
 	/**
@@ -172,13 +175,15 @@ public class ShipGroup
 	 */
 	public void remove(Collection<Ship> ships) throws Exception
 	{
-		Class<?> type = ships.toArray()[0].getClass();
-		boolean result = this.ships.get(type).removeAll(ships);
-
-		if (!result)
+		if (!ships.isEmpty())
 		{
-			throw new Exception("attempted to remove ship that doesn't exist");
+			List<Ship> sl = this.ships.get(ships.iterator().next().getClass());
+			for (int i = 0, len = ships.size(); i < len; i++)
+			{
+				sl.remove(0);
+			}
 		}
+
 	}
 
 	/**
@@ -188,11 +193,11 @@ public class ShipGroup
 	 * @param num
 	 * @throws Exception
 	 */
-	public void remove(Class<?> type, int num) throws Exception
+	public void remove(Class<? extends Ship> type, int num) throws Exception
 	{
-		for (int i = 0; i < num; i++)
+		for (int i = 0, len = ships.get(type).size(); i < num; i++)
 		{
-			ships.get(type).remove(0);
+			ships.get(type).remove(len - i - 0);
 		}
 	}
 
@@ -201,18 +206,7 @@ public class ShipGroup
 	 */
 	public void removeAll()
 	{
-		ships = new HashMap<Class<?>, List<Ship>>();
-	}
-
-	/**
-	 * get a fleet of all the ships of the given type from the group
-	 * 
-	 * @param type
-	 * @return
-	 */
-	public ShipGroup getAll(Class<?> type)
-	{
-		return new ShipGroup(ships.get(type));
+		ships.clear();
 	}
 
 	/**
@@ -223,78 +217,23 @@ public class ShipGroup
 	public List<Ship> getAll()
 	{
 		List<Ship> r = new ArrayList<Ship>();
-		for (Class<?> type : ships.keySet())
+		for (Class<? extends Ship> type : ships.keySet())
 		{
 			r.addAll(ships.get(type));
 		}
-		
+
 		return r;
 	}
 
 	/**
-	 * return a new fleet formed by removing ships from this group and adding it to the new one
-	 * 
-	 * @param type
-	 * @param num
-	 * @return
-	 * @throws Exception
-	 */
-	public ShipGroup take(Class<?> type, int num) throws Exception
-	{
-		// log message
-		System.out.println("taking " + String.valueOf(num) + " ships of type " + type.getName());
-		System.out.println("there are " + String.valueOf(getCount(type)) + " ships of that type");
-		
-		List<Ship> sendShips = new ArrayList<Ship>();
-		int track = 0;
-
-		// handle no ships to return
-		if (num <= 0) return null;
-
-		// iterate through the list to mark all the ships to move
-		for (Ship s : ships.get(type))
-		{
-			if (track++ > num) break;
-			sendShips.add(s);
-		}
-
-		// if too few ships were found, throw an error
-		if (track < num) throw new Exception("not enough ships");
-
-		// remove the ships and add them to the new fleet
-		for (Ship s : sendShips)
-		{
-			remove(s);
-		}
-
-		// return the assembled fleet
-		return new ShipGroup(sendShips);
-	}
-
-	/**
-	 * remove from this group the specified subgroup and return a new subgroup
-	 * @param g
-	 * @return
-	 * @throws Exception
-	 */
-	public ShipGroup take(ShipGroup g) throws Exception
-	{
-		for (Class<?> type : g.ships.keySet())
-		{
-			take(type, g.ships.get(type).size());
-		}
-
-		return new ShipGroup(g);
-	}
-
-	/**
 	 * check if this group contains the complete subgroup
+	 * 
 	 * @param g
 	 * @return
 	 */
 	public boolean contains(ShipGroup g)
 	{
-		for (Class<?> type : g.ships.keySet())
+		for (Class<? extends Ship> type : g.ships.keySet())
 		{
 			if (getCount(type) < g.getCount(type)) return false;
 		}
