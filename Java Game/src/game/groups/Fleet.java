@@ -1,13 +1,14 @@
 package game.groups;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import game.entities.Ship;
 import game.helpers.Displacement;
+import game.helpers.PointerDoubleMatrix;
 import game.managers.ConfigurationManager;
 import game.managers.PlanetManager;
 import game.players.Player;
@@ -53,10 +54,11 @@ public class Fleet extends ShipGroup
 	 * update the status of this fleet, including position if moving
 	 * 
 	 * @param pm
+	 * @throws Exception
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	public void update(PlanetManager pm)
+	public void update(PlanetManager pm) throws Exception
 	{
 		if (path != null)
 		{
@@ -70,9 +72,9 @@ public class Fleet extends ShipGroup
 					{
 						for (Ship f : getAll())
 						{
-							f.maxHealth();
+							f.heal();
 						}
-						
+
 						pm.setPlanetOwner(owner, destination);
 						destination.addShips(this);
 						removeAll();
@@ -112,7 +114,7 @@ public class Fleet extends ShipGroup
 		{
 			for (Ship s : l)
 			{
-				if (s.getSpeed() < speed) speed = s.getSpeed();
+				if (s.speed < speed) speed = s.speed;
 			}
 		}
 	}
@@ -125,113 +127,101 @@ public class Fleet extends ShipGroup
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	public void attack(ShipGroup defender, double defenderBonus)
+	public void attack(ShipGroup defender, double defenderBonus) throws Exception
 	{
-		Set<Class<? extends Ship>> types = new HashSet<Class<? extends Ship>>(ships.keySet());
-		types.addAll(defender.ships.keySet());
+		Set<Class<? extends Ship>> allTypes = new HashSet<>(ships.keySet());
+		allTypes.addAll(defender.ships.keySet());
+		List<Class<? extends Ship>> allTypesList = new ArrayList<>(allTypes);
+		int tn = allTypesList.size();
+		
+		double iniHpA = getTotalHealth();
+		double iniHpB = defender.getTotalHealth();
+		
+		int dmgA = -getTotalDamage();
+		int dmgB = (int) (-defender.getTotalDamage() * defenderBonus);
+		double avgDmgA = dmgA / defender.ships.keySet().size();
+		double avgDmgB =  dmgB / ships.keySet().size();
+		
+		// damage, strength map and individual ship health
+		PointerDoubleMatrix d_p = new PointerDoubleMatrix(1, tn);
+		PointerDoubleMatrix m_p = new PointerDoubleMatrix(tn, tn);
+		PointerDoubleMatrix h_p = new PointerDoubleMatrix(tn, tn);
+		
+		// matrix for damages
+		PointerDoubleMatrix d_a = new PointerDoubleMatrix(1, tn);
+		PointerDoubleMatrix d_b = new PointerDoubleMatrix(1, tn);
 
-		while (defender.getCount() > 0 && getCount() > 0)
+		// matrix for healths		
+		PointerDoubleMatrix h_a = new PointerDoubleMatrix(1, tn);
+		PointerDoubleMatrix h_b = new PointerDoubleMatrix(1, tn);
+		
+		for (int i = 0; i < tn; i++)
 		{
-			for (Class<? extends Ship> type : types)
+			Class<? extends Ship> t = allTypesList.get(i);
+			Ship s = t.newInstance();
+
+			h_a.set(0, i, getCount(t) * s.health);
+			h_b.set(0, i, defender.getCount(t) * s.health);
+			d_p.set(0, i, -s.getStrength()._2);
+			h_p.set(i, i, 1 / s.maxHealth);
+			
+			if (defender.ships.containsKey(t))
 			{
-				// get the map of strengths for the current class of ship, 
-				Map<Class<? extends Ship>, Integer> strengths = null;
-				try
-				{
-					strengths = type.newInstance().getStrengths();
-				}
-				catch (InstantiationException | IllegalAccessException e)
-				{
-					e.printStackTrace();
-				}
+				d_a.set(0, i, avgDmgA);
+			}
+			else
+			{
+				d_a.set(0, i, 0);
+			}
 
-				// evaluate defenders
-				if (defender.ships.containsKey(type))
-				{
-					// filter strengths based on attacker makeup
-					Set<Class<?>> strSet = new HashSet<Class<?>>(strengths.keySet());
-					strSet.retainAll(ships.keySet());
-					Class<?>[] strAll = strSet.toArray(new Class<?>[] {});
+			if (ships.containsKey(t))
+			{
+				d_b.set(0, i, avgDmgB);
+			}
+			else
+			{
+				d_b.set(0, i, 0);
+			}
 
-					// get the list of attackers
-					List<Ship> attackers = getAll();
-
-					// for each of the defenders ships of the current type, damage an attacker
-					for (Ship s : defender.ships.get(type))
-					{
-						// check whether to apply strength
-						if (strSet.isEmpty() || !ships.containsKey(strAll[0]))
-						{
-							Ship atk = attackers.get(0);
-							atk.subtractHealth((int) (s.getAttack() * defenderBonus));
-
-							// if the attacker is dead, remove it from the ships
-							if (atk.isDead())
-							{
-								ships.get(atk.getClass()).remove(atk);
-							}
-						}
-						else
-						{
-							// get list of weak ships and last one in that list.
-							List<Ship> atl = ships.get(strAll[0]);
-							Ship atk = atl.get(atl.size() - 1);
-
-							atk.subtractHealth((int) ((s.getAttack() + s.getStrengths().get(strAll[0])) * defenderBonus));
-							if (atk.isDead())
-							{
-								atl.remove(atl.size() - 1);
-							}
-						}
-					}
-				}
-
-				// evaluate attackers
-				if (ships.containsKey(type))
-				{
-					// filter strengths based on defender makeup
-					Set<Class<?>> strSet = new HashSet<Class<?>>(strengths.keySet());
-					strSet.retainAll(defender.ships.keySet());
-					Class<?>[] strAll = strSet.toArray(new Class<?>[] {});
-
-					// get the list of defenders
-					List<Ship> defenders = defender.getAll();
-
-					// for each of the defenders ships of the current type, damage an attacker
-					for (Ship s : ships.get(type))
-					{
-						// check whether to apply strength
-						if (strSet.isEmpty() || !defender.ships.containsKey(strAll[0]))
-						{
-							Ship dfn = defenders.get(0);
-							dfn.subtractHealth((int) (s.getAttack()));
-
-							if (dfn.isDead())
-							{
-								defender.ships.get(dfn.getClass()).remove(dfn);
-							}
-						}
-						else
-						{
-							// get list of weak ships and last one in that list
-							List<Ship> dfl = defender.ships.get(strAll[0]);
-							Ship dfn = dfl.get(dfl.size() - 1);
-
-							dfn.subtractHealth((int) (s.getAttack()));
-							if (dfn.isDead())
-							{
-								dfl.remove(dfl.size() - 1);
-							}
-						}
-					}
-				}
+			for (int j = 0; j < tn; j++)
+			{
+				int val = (s.getStrength()._1 == s.getStrength()._1) ? 1 : 0;
+				m_p.set(i, j, val);
 			}
 		}
+
+		PointerDoubleMatrix check = new PointerDoubleMatrix(1, tn, 0d);
+		while (!h_a.equals(check) || !h_b.equals(check))
+		{
+
+			double newHpA = 0, newHpB = 0;
+			for (int i = 0; i < tn; i++)
+			{
+				if (h_a.get(0, i).v < 1) h_a.set(0, i, 0d);
+				if (h_b.get(0, i).v < 1) h_b.set(0, i, 0d);
+
+				newHpA += h_a.get(0, i).v;
+				newHpB += h_b.get(0, i).v;
+			}
+
+			
+			h_a = h_a.add(d_a.mul(newHpA / iniHpA).add(d_p.mul(h_b).mul(h_p).mul(m_p)));
+			h_b = h_b.add(d_b.mul(newHpB / iniHpB).add(d_p.mul(h_a).mul(h_p).mul(m_p)));
+		}
+		
+		
+
 	}
 
-	public void attack(Planet p)
+	public void attack(Planet p) throws Exception
 	{
 		attack(p.getShipInventory(), ConfigurationManager.planetDefenderBonus);
 	}
 
 }
+
+
+
+
+
+
