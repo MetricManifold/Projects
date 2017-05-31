@@ -1,5 +1,25 @@
+.advanced-settings {
+	-fx-background-color: white;
+	-fx-padding: 15;
+}
+
+.grid-settings {
+	-fx-background-color: lightgray;
+	-fx-background-radius: 10px;
+}
+
+.tab-pane {
+	-fx-background-radius: 10px;
+	-fx-background-color: lightgray;
+}
+
+
+
+
+
+
+
 .scene {
-	-fx-background-color: black;
 	-fx-padding: 2px;
 	-fx-background-image: url("backgroundmain.jpg");
 	-fx-background-opacity: 0.3;
@@ -31,6 +51,10 @@
 
 .planet-grid4 {
 	-fx-background-image: url("background4.jpg");
+}
+
+.mini-grid {
+	-fx-background-color: rgba(18, 34, 58, 1.0);
 }
 
 
@@ -87,13 +111,67 @@
 	-fx-cursor: hand;
 }
 
+.planet-button5 {
+	-fx-background-image: url("planet5.png");
+	-fx-cursor: hand;
+}
+
+.planet-button6 {
+	-fx-background-image: url("planet6.png");
+	-fx-cursor: hand;
+}
+
+.planet-button7 {
+	-fx-background-image: url("planet7.png");
+	-fx-cursor: hand;
+}
+
+
+.planet-button8 {
+	-fx-background-image: url("planet8.png");
+	-fx-cursor: hand;
+}
+
+
+.planet-button9 {
+	-fx-background-image: url("planet9.png");
+	-fx-cursor: hand;
+}
+
+
+.planet-button10 {
+	-fx-background-image: url("planet10.png");
+	-fx-cursor: hand;
+}
+
+
 /* TURN BAR */
 
 .turn-bar {
 	-fx-background-color: #0c4422;
 	-fx-padding: 5;
+<<<<<<< HEAD
 	-fx-alignment: center;
 	-fx-effect: innershadow(gaussian, #051c0a, 12, 0.2, 0, 0);
+=======
+	-fx-effect: innershadow(gaussian, #051c0a, 12, 0.2, 0, 0);
+}
+
+.scroll-list {
+	-fx-background: transparent;
+	-fx-background-insets: 0;
+	-fx-padding: 0;
+}
+
+.scroll-list:focused {
+	-fx-background-insets: 0;
+}
+
+.table-list {
+	-fx-background-color: rgba(163, 255, 253, 0.2);
+	-fx-padding: 3 10;
+	-fx-background-radius: 8;
+>>>>>>> dev
 }
 
 .player-label {
@@ -102,16 +180,31 @@
 	-fx-alignment: center;
 	-fx-font: 12px "Century Gothic";
 	-fx-background-radius: 8;
+<<<<<<< HEAD
 }
 
 .timer {
 	-fx-font: 10px "Consolas";
+=======
+}
+
+.player-label:hover {
+	-fx-effect: innershadow(gaussian, white, 6, 0.0, 0, 0);
+}
+
+.timer {
+	-fx-font: 12px "Consolas";
+>>>>>>> dev
 	-fx-padding: 5;
 	-fx-alignment: center;
 }
 
 .tooltip-list:hover {
+<<<<<<< HEAD
 	-fx-color: gray;
+=======
+	-fx-fill: gray;
+>>>>>>> dev
 }
 
 .tooltip-list {
@@ -124,6 +217,10 @@
 	-fx-fill: white;
 	-fx-font-size: 14px;
 	-fx-alignment: left;
+}
+
+.tooltip-list-title:hover {
+	-fx-fill: yellow;
 }
 
 .tooltip-list-production {
@@ -149,26 +246,41 @@
 .turn-bar-button {
 	-fx-text-fill: white;
 	-fx-min-width: 65px;
+<<<<<<< HEAD
 	-fx-padding: 4px;
+=======
+	-fx-padding: 2px;
+>>>>>>> dev
 	-fx-alignment: center;
 
-	-fx-effect: innershadow(gaussian, black, 12, 0.2, 0, 0);
-	
+	-fx-effect: innershadow(gaussian, black, 12, 0.5, 0, 0);
+	-fx-background-insets: 0, 1, 2;
 	-fx-background-color: #224f1e;
 	-fx-background-radius: 0 8 0 8;
 
+	-fx-border-width: 2px;
+	-fx-border-color: transparent;
+	-fx-border-radius: 0 8 0 8;
+
 	-fx-font: 10px "Century Gothic";
+
+	-fx-focus-color: transparent;
+	-fx-faint-focus-color: transparent;
 }
 
 .turn-bar-button:hover {
 	-fx-background-color: #10260e;
-	-fx-border: none;
 }
 
 .turn-bar-button:pressed {
 	-fx-background-insets: 0 1 1 0, 1 0 0 1, 1;
 	-fx-background-color: #557752;
 }
+/*
+.turn-bar-button:focused {
+	-fx-background-insets: 0, 1, 2;
+	-fx-border-color: lightblue;
+}*/
 
 
 /* PLAYER COLORS */

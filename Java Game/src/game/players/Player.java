@@ -1,21 +1,26 @@
 package game.players;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import game.managers.PlanetManager;
 import game.managers.PlayerManager;
 import game.managers.TurnManager;
+<<<<<<< HEAD
+=======
+import game.managers.PlayerManager.Controller;
+>>>>>>> dev
 import game.tiles.Planet;
 import game.tiles.Space;
 
 public class Player
 {
 	private Planet origin, destination;
-	private List<Planet> planets = new ArrayList<Planet>();
+	private Set<Planet> planets = new HashSet<Planet>();
 	private int num;
 	private String color;
 	private boolean alive = true;
+<<<<<<< HEAD
 	private PlayerManager.Controller controller;
 
 	public Player(int num, String color, PlayerManager.Controller controller)
@@ -23,12 +28,30 @@ public class Player
 		this.num = num;
 		this.color = color;
 		this.controller = controller;
+=======
+	private Controller controller;
+
+	protected Player(int num, String color, Controller controller)
+	{
+		this.num = num;
+		this.color = color;
+		this.controller = Controller.HUMAN;
+>>>>>>> dev
 
 		origin = null;
 		destination = null;
 	}
 
+<<<<<<< HEAD
 	public PlayerManager.Controller getController()
+=======
+	public Player(int num, String color)
+	{
+		this(num, color, Controller.HUMAN);
+	}
+
+	public Controller getController()
+>>>>>>> dev
 	{
 		return controller;
 	}
@@ -95,23 +118,35 @@ public class Player
 	}
 
 	/**
-	 * give a planet to this player's control
+	 * return the list of owned planets
+	 * 
+	 * @return
+	 */
+	public Set<Planet> getPlanetSet()
+	{
+		return new HashSet<>(planets);
+	}
+
+	/**
+	 * add a planet to this player's planet set
 	 * 
 	 * @param p
 	 */
 	public void addPlanet(Planet p)
 	{
-		p.setOwner(this);
 		planets.add(p);
 	}
+<<<<<<< HEAD
 
 	public List<Planet> getPlanets()
 	{
 		return planets;
 	}
+=======
+>>>>>>> dev
 
 	/**
-	 * removes a planet from this player's control
+	 * removes a planet from this player's planet set
 	 * 
 	 * @param p
 	 */
@@ -173,11 +208,19 @@ public class Player
 
 	/**
 	 * updates the state of this player
+<<<<<<< HEAD
+=======
+	 * 
+>>>>>>> dev
 	 * @param pg
 	 * @param tm
 	 * @param pm
 	 */
 	public void update(PlanetManager pg, TurnManager tm, PlayerManager pm)
+<<<<<<< HEAD
 	{
 	}
+=======
+	{}
+>>>>>>> dev
 }

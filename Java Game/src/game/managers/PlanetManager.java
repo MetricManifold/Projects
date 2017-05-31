@@ -7,9 +7,11 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
+import game.managers.PlayerManager.Controller;
 import game.players.Player;
 import game.tiles.Planet;
 import game.tiles.Space;
+<<<<<<< HEAD
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -30,18 +32,30 @@ public class PlanetManager
 		NUM_P_BG = 4, NUM_B_BG = 4,
 		MARGIN = 5, TOPMARGIN = 2;
 
+=======
+
+public class PlanetManager
+{
+>>>>>>> dev
 	// planets and corresponding buttons
-	private Map<Space, Label> tiles = new HashMap<Space, Label>();
-	private Map<Integer, Planet> planets = new HashMap<Integer, Planet>();
+	protected Map<Integer, Planet> planets;
+	protected Map<Integer, Space> spaces;
 
-	private int maxh, maxv, x, y, len;
-	private double density;
+	protected int x, y, len;
+	protected double density;
 
+<<<<<<< HEAD
 	private StackPane pane = new StackPane();
 	private TilePane tilePane = new TilePane(Orientation.HORIZONTAL);
+=======
+	protected PlayerManager PM;
+	protected TurnManager TM;
+	protected ConfigManager CM;
+>>>>>>> dev
 
-	public PlanetManager()
+	public PlanetManager(ConfigManager CM)
 	{
+<<<<<<< HEAD
 		// initialize local variables
 		this.x = ConfigurationManager.gridX;
 		this.y = ConfigurationManager.gridY;
@@ -55,38 +69,48 @@ public class PlanetManager
 		spawnPlanets(); // 			create the planets on this grid
 
 		System.out.println("finished grid");
-	}
-
-	/**
-	 * Sets the properties related to tilepane UI
-	 */
-	void makeTilePaneUI()
-	{
-		VBox.setMargin(tilePane, new Insets(TOPMARGIN, 0, 0, 0));
-		pane.getChildren().add(tilePane);
-
-		tilePane.setHgap(PADH);
-		tilePane.setVgap(PADV);
-
-		tilePane.setPrefTileWidth(TILEH);
-		tilePane.setPrefTileHeight(TILEV);
-
-		tilePane.setPrefColumns(x);
-		tilePane.setPrefRows(y);
-
-		tilePane.setMaxSize(maxh, maxv);
-		tilePane.setPadding(new Insets(MARGIN, MARGIN, MARGIN, MARGIN));
-		tilePane.setAlignment(Pos.BASELINE_CENTER);
-
-		String bgSelect = String.format("planet-grid%d", ThreadLocalRandom.current().nextInt(NUM_B_BG) + 1);
-		tilePane.getStyleClass().addAll("planet-grid", bgSelect);
+=======
+		this.CM = CM;
+		initialize();
+>>>>>>> dev
 	}
 
 	/**
 	 * Sets the mouse event associated with the tilepane to find all the grid locations
 	 */
-	public void setEvents(PlayerManager pm, TurnManager tm)
+	public void setup(PlayerManager pm, TurnManager tm)
 	{
+<<<<<<< HEAD
+		VBox.setMargin(tilePane, new Insets(TOPMARGIN, 0, 0, 0));
+		pane.getChildren().add(tilePane);
+=======
+		TM = tm;
+		PM = pm;
+>>>>>>> dev
+
+		spawnPlanets();
+		setStartPlanets();
+	}
+
+	/**
+	 * resets the player manager, initializes then resets the turn manager
+	 */
+	public void reset()
+	{
+		initialize();
+		PM.reset();
+		CM.clearNames();
+
+		spawnPlanets();
+		setStartPlanets();
+	}
+
+	/**
+	 * initialization activity for this manager to set variables and create planets
+	 */
+	protected void initialize()
+	{
+<<<<<<< HEAD
 		setStartPlanets(pm);
 
 		tilePane.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -109,31 +133,38 @@ public class PlanetManager
 				}
 			}
 		});
+=======
+		this.x = CM.gridX;
+		this.y = CM.gridY;
+		this.density = CM.planetDensity;
+		this.len = x * y;
+>>>>>>> dev
 	}
 
 	/**
 	 * puts planets in the grid and associates them with buttons
 	 */
-	void spawnPlanets()
+	public void spawnPlanets()
 	{
+<<<<<<< HEAD
 		for (int i = 0; i < len; i++)
 		{
 			// create the necessary elements
 			Label l = new Label();
 			Space s = new Space(i % x, i / x);
+=======
+		planets = new HashMap<Integer, Planet>();
+		spaces = new HashMap<Integer, Space>();
+>>>>>>> dev
 
-			// modify button to correct size and action
-			l.setMinSize(TILEH, TILEV);
-			l.setMaxSize(TILEH, TILEV);
-
-			tilePane.getChildren().add(l);
-
-			// choose whether to create a planet or empty space
-			double prob = ThreadLocalRandom.current().nextDouble();
-			if (prob < density)
+		do
+		{
+			for (int i = 0; i < len; i++)
 			{
-				Planet p = new Planet(s);
+				// create the necessary elements
+				Space s = new Space(i % x, i / x);
 
+<<<<<<< HEAD
 				// set styles
 				String bgSelect = String.format("planet-button%d", ThreadLocalRandom.current().nextInt(NUM_P_BG) + 1);
 				l.getStyleClass().addAll("space-button", bgSelect);
@@ -148,32 +179,43 @@ public class PlanetManager
 			{
 				l.getStyleClass().add("space-button");
 				tiles.put(s, l);
+=======
+				// choose whether to create a planet or empty space
+				double prob = ThreadLocalRandom.current().nextDouble();
+				if (prob < density)
+				{
+					Planet p = new Planet(s, CM);
+					planets.put(hashLocation(i % x, i / x), p);
+				}
+				else
+				{
+					spaces.put(hashLocation(i % x, i / x), s);
+				}
+>>>>>>> dev
 			}
-		}
+		} while (planets.size() < PM.numPlayers);
 	}
 
 	/**
 	 * give players one starting planet
-	 * 
-	 * @param pm
 	 */
-	void setStartPlanets(PlayerManager pm)
+	public void setStartPlanets()
 	{
 		// make a list of planets to choose from
-		int numPlayers = ConfigurationManager.numPlayers;
 		Planet[] planetArray = getPlanetArray();
 
 		// make a list denoting each of the planets
 		List<Integer> nums = new ArrayList<>();
 		IntStream.range(0, planets.size()).forEach(i -> nums.add(i));
 
-		while (numPlayers-- > 0)
+		for (int i = 0; i < CM.numHumanPlayers; i++)
 		{
 			// pick a random value from the planet array
 			int r = ThreadLocalRandom.current().nextInt(nums.size());
 			int pick = nums.remove(r);
 			Planet p = planetArray[pick];
 
+<<<<<<< HEAD
 			setPlanetOwner(pm.getPlayer(numPlayers), p);
 			p.setProduction(10);
 			p.produceShips();
@@ -222,26 +264,15 @@ public class PlanetManager
 		{
 			clearSelection(o, d);
 			tm.enableSend(false);
+=======
+			setPlanetOwner(PM.getPlayersOfType(Controller.HUMAN)[i], p);
+			p.setProduction(CM.defaultShip, CM.initialProduction);
+			p.addShips(CM.defaultShip, CM.shipStartCount);
+>>>>>>> dev
 		}
 
-	}
-
-	/**
-	 * clears the player's current selection from the grid
-	 * 
-	 * @param origin
-	 * @param destination
-	 */
-	public void clearSelection(Planet origin, Planet destination)
-	{
-		if (origin != null)
-		{
-			tiles.get(origin).getStyleClass().remove("space-button-origin");
-		}
-		if (destination != null)
-		{
-			tiles.get(destination).getStyleClass().remove("space-button-destination");
-		}
+		nums.forEach(n -> setPlanetOwner(PM.neutral, planetArray[n]));
+		if (!CM.neutralShipsVisible) nums.forEach(n -> planetArray[n].setDisplayShips(false));
 	}
 
 	/**
@@ -252,6 +283,7 @@ public class PlanetManager
 	 */
 	public void setPlanetOwner(Player player, Planet p)
 	{
+<<<<<<< HEAD
 		// if owner is not null 
 		if (p.getOwner() != null)
 		{
@@ -289,6 +321,9 @@ public class PlanetManager
 				p.getTooltip().hide();
 			}
 		});
+=======
+		p.setOwner(player);
+>>>>>>> dev
 	}
 
 	/**
@@ -298,7 +333,7 @@ public class PlanetManager
 	 * @param y
 	 * @return
 	 */
-	int hashLocation(int x, int y)
+	protected int hashLocation(int x, int y)
 	{
 		return x + this.x * y;
 	}
@@ -313,6 +348,7 @@ public class PlanetManager
 		return planets.values().toArray(new Planet[planets.size()]);
 	}
 
+<<<<<<< HEAD
 	/**
 	 * return the width in tiles of the grid
 	 * 
@@ -343,4 +379,6 @@ public class PlanetManager
 		return pane;
 	}
 
+=======
+>>>>>>> dev
 }

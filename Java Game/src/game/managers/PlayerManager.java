@@ -1,6 +1,11 @@
 package game.managers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import game.groups.ShipGroup;
+import game.players.Neutral;
 import game.players.Player;
 
 /**
@@ -11,34 +16,77 @@ import game.players.Player;
  */
 public class PlayerManager
 {
-	private int playerIndex = 1;
+	private int playerIndex;
 	private Player[] players;
 	public final Player neutral;
+	public int numPlayers;
+
+	protected ConfigManager CM;
 
 	public enum Controller
+<<<<<<< HEAD
 	{
 		AI, HUMAN, NEUTRAL
 	};
 
 	public PlayerManager()
+=======
+>>>>>>> dev
 	{
-		int numPlayers = ConfigurationManager.numPlayers;
+		AI, HUMAN, NEUTRAL, HOSTILE
+	};
 
+<<<<<<< HEAD
 		players = new Player[numPlayers];
 		neutral = new Player(0, ConfigurationManager.COLORS[0], Controller.NEUTRAL);
+=======
+	public PlayerManager(ConfigManager CM)
+	{
+		this.CM = CM;
+		neutral = new Neutral(0, CM.COLORS[0]);
 
-		for (int i = 0; i < numPlayers; i++)
+		initialize();
+	}
+	
+	/**
+	 * resets this manager to initial conditions
+	 */
+	public void reset()
+	{
+		initialize();
+	}
+>>>>>>> dev
+
+	/**
+	 * setup activity for this manager
+	 */
+	protected void initialize()
+	{
+		numPlayers = CM.numHumanPlayers + 1;
+
+		players = new Player[numPlayers];
+		players[0] = neutral;
+		playerIndex = 1;
+		
+		for (int i = 1; i < numPlayers; i++)
 		{
+<<<<<<< HEAD
 			players[i] = new Player(i, ConfigurationManager.COLORS[i], Controller.HUMAN);
+=======
+			players[i] = new Player(i, CM.COLORS[i]);
+>>>>>>> dev
 		}
 	}
 
+	/**
+	 * move player index to the next human player
+	 */
 	public void nextPlayer()
 	{
 		do
 		{
-			playerIndex = playerIndex % (ConfigurationManager.numPlayers - 1) + 1;
-		} while (!players[playerIndex].isAlive());
+			playerIndex = playerIndex % numPlayers;
+		} while (!players[playerIndex].isAlive() && getNumPlayersOfType(Controller.HUMAN) > 0);
 	}
 
 	/**
@@ -73,4 +121,39 @@ public class PlayerManager
 	{
 		return players[index];
 	}
+
+	public int getNumPlayersOfType(Controller c)
+	{
+		int num = 0;
+		for (Player p : players)
+		{
+			if (p.getController() == c)
+			{
+				num++;
+			}
+		}
+
+		return num;
+	}
+
+	public Player[] getPlayersOfType(Controller c)
+	{
+		List<Player> list = new ArrayList<>(Arrays.asList(players));
+		list.removeIf(p -> p.getController() != c);
+
+		return list.toArray(new Player[] {});
+	}
+	
+	public Player[] getPlayers()
+	{
+		return players;
+	}
 }
+
+
+
+
+
+
+
+
