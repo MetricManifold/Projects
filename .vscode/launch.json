@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-WindowManager<Java Game>",
+            "request": "launch",
+            "mainClass": "game.ui.WindowManager",
+            "projectName": "Java Game"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Main<Meteor Game>",
+            "request": "launch",
+            "mainClass": "munjena_kotska.Main",
+            "projectName": "Meteor Game"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Kotska<Moving Block>",
+            "request": "launch",
+            "mainClass": "Kotska.Kotska",
+            "projectName": "Moving Block"
+        }
+    ]
+}
